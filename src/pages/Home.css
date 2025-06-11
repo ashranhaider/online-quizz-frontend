@@ -1,9 +1,21 @@
 .admin-layout {
+    display: flex;
     min-height: 100vh;
 }
 
 .main-content {
-    min-height: 100vh;
+    margin-left: 250px; /* match sidebar width */
+    width: calc(100% - 250px);
     display: flex;
     flex-direction: column;
+}
+
+.page-content {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.page-content .card {
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
 }
