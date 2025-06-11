@@ -1,0 +1,78 @@
+/* Body and page background */
+body {
+    font-family: "Lato", sans-serif;
+    margin: 0;
+    background-color: #f1f3f5;
+}
+
+/* Main layout container */
+.login-page {
+    height: 100vh;
+}
+
+/* Left side - Welcome text */
+.sidenav {
+    background: linear-gradient(135deg, #000000, #333333);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    padding: 2rem;
+}
+
+/* Welcome heading */
+.login-main-text h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Welcome paragraph */
+.login-main-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Card styles */
+.card {
+    border-radius: 1rem;
+    border: none;
+}
+
+/* Card title icon alignment */
+.card h4 i {
+    vertical-align: middle;
+}
+
+/* Input group styles */
+.input-group-text {
+    background-color: #f0f0f0;
+    border-right: 0;
+}
+
+.input-group .form-control {
+    border-left: 0;
+}
+
+/* Buttons */
+.btn {
+    font-weight: 500;
+}
+
+/* Responsive spacing adjustments */
+@media screen and (max-width: 768px) {
+    .sidenav {
+        display: none;
+    }
+
+    .login-page {
+        padding: 2rem;
+    }
+
+    .card {
+        width: 100% !important;
+    }
+}
