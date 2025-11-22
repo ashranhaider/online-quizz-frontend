@@ -1,24 +1,41 @@
-import { Nav } from 'react-bootstrap';
-import { NavLink } from 'react-router';
-import './Sidebar.css';
+
+import { NavLink } from "react-bootstrap";
+import "./Sidebar.css";
 
 const Sidebar: React.FC = () => {
-    return (
-        <div className="sidebar d-flex flex-column p-3 text-white">
-            <h4 className="mb-4">Admin Panel</h4>
-            <Nav className="flex-column">
-                <Nav.Link as={NavLink} to="/" end>
-                    <i className="bi bi-house me-2" /> Dashboard
-                </Nav.Link>
-                <Nav.Link as={NavLink} to="/users">
-                    <i className="bi bi-people me-2" /> Users
-                </Nav.Link>
-                <Nav.Link as={NavLink} to="/settings">
-                    <i className="bi bi-gear me-2" /> Settings
-                </Nav.Link>
-            </Nav>
-        </div>
-    );
+  return (
+    <nav id="sidebar" className="sidebar js-sidebar">
+      <div className="sidebar-content js-simplebar">
+        <a className="sidebar-brand" href="#">
+          <span className="align-middle">AdminKit</span>
+        </a>
+        <ul className="sidebar-nav">
+          <li className="sidebar-header">Pages</li>
+
+          <li className="sidebar-item">
+            <NavLink className="sidebar-link" to="/">
+              <i className="align-middle" data-feather="sliders" />{" "}
+              <span className="align-middle">Dashboard</span>
+            </NavLink>
+          </li>
+
+          <li className="sidebar-item">
+            <NavLink className="sidebar-link" to="/profile">
+              <i className="align-middle" data-feather="user" />{" "}
+              <span className="align-middle">Profile</span>
+            </NavLink>
+          </li>
+
+          <li className="sidebar-item active">
+            <NavLink className="sidebar-link" to="/blank">
+              <i className="align-middle" data-feather="book" />{" "}
+              <span className="align-middle">Blank</span>
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
 };
 
 export default Sidebar;
