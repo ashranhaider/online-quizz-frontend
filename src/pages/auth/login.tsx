@@ -1,76 +1,64 @@
-import { Container, Row, Col, Form, Button, Card, InputGroup } from 'react-bootstrap';
+import { Form, Button } from "react-bootstrap";
+import "./login.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './login.css';
 
 function Login() {
-    return (
-        <div className="login-page d-flex align-items-center justify-content-center">
-            <Row className="w-100 g-0">
-                <Col md={5} className="sidenav d-flex flex-column justify-content-center align-items-center text-white p-4 text-center">
-                    <div className="login-main-text">
-                        <h1 className="display-5 fw-bold">Welcome Back</h1>
-                        <p className="lead mt-3">Access your dashboard by logging in or registering below.</p>
-                    </div>
-                </Col>
+  return (
+    <div className="login-dark">
+      <div className="auth-card">
+        <div className="auth-box">
+          <Form>
+            <div className="illustration">
+              <i className="bi bi-lock-fill"></i>
+            </div>
 
-                <Col md={7} className="d-flex align-items-center justify-content-center">
-                    <Card className="p-4 shadow w-75">
-                        <Card.Body>
-                            <h4 className="mb-4 text-center">
-                                <i className="bi bi-door-open me-2"></i>Login
-                            </h4>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="email"
+                placeholder="Email"
+                className="form-control"
+              />
+            </Form.Group>
 
-                            <div className="auth-container">
-                                <div className="auth-form">
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="formUsername">
-                                            <Form.Label>User Name</Form.Label>
-                                            <InputGroup>
-                                                <InputGroup.Text>
-                                                    <i className="bi bi-person" />
-                                                </InputGroup.Text>
-                                                <Form.Control type="text" placeholder="Enter username" />
-                                            </InputGroup>
-                                        </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                className="form-control"
+              />
+            </Form.Group>
 
-                                        <Form.Group className="mb-3" controlId="formPassword">
-                                            <Form.Label>Password</Form.Label>
-                                            <InputGroup>
-                                                <InputGroup.Text>
-                                                    <i className="bi bi-lock" />
-                                                </InputGroup.Text>
-                                                <Form.Control type="password" placeholder="Enter password" />
-                                            </InputGroup>
-                                        </Form.Group>
+            <Button type="submit" className="btn btn-primary w-100">
+              Log In
+            </Button>
 
-                                        <div className="auth-actions">
-                                            <Button variant="light" type="submit" className="auth-btn action-btn btn-login">
-                                                <i className="bi bi-box-arrow-in-right me-2"></i>Login
-                                            </Button>
-
-                                            <Button variant="outline-secondary" type="button" className="auth-btn action-btn btn-register">
-                                                <i className="bi bi-person-plus me-2"></i>Register
-                                            </Button>
-                                        </div>
-                                    </Form>
-                                </div>
-
-                                <div className="auth-social">
-                                    <h5>Or sign in with</h5>
-                                    <Button className="btn-social btn-google auth-btn" type="button">
-                                        <i className="bi bi-google me-2" />Continue with Google
-                                    </Button>
-                                    <Button className="btn-social btn-facebook auth-btn" type="button">
-                                        <i className="bi bi-facebook me-2" />Continue with Facebook
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
+            <a href="#" className="forgot">
+              Forgot your email or password?
+            </a>
+          </Form>
         </div>
-    );
+
+        <div className="separator">
+          <div className="line" />
+          <div className="or">OR</div>
+          <div className="line" />
+        </div>
+
+        <div className="auth-box social-box">
+          <div className="social-title">Sign in with</div>
+          <Button className="btn-social" type="button">
+            <i className="bi bi-google" />
+            <span>Continue with Google</span>
+          </Button>
+
+          <Button className="btn-social" type="button">
+            <i className="bi bi-facebook" />
+            <span>Continue with Facebook</span>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Login;
