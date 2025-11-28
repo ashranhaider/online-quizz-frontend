@@ -12,7 +12,7 @@ body {
 
 /* Left side - Welcome text */
 .sidenav {
-    background: linear-gradient(135deg, #000000, #333333);
+    background: linear-gradient(135deg, #0b2447 0%, #1e3a8a 50%, #6d28d9 100%);
     height: 100vh;
     display: flex;
     align-items: center;
@@ -24,22 +24,105 @@ body {
 
 /* Welcome heading */
 .login-main-text h1 {
-    font-weight: 700;
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-weight: 800;
+    font-size: 2.75rem;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+    text-shadow: 0 4px 18px rgba(10, 10, 25, 0.6);
 }
 
 /* Welcome paragraph */
 .login-main-text p {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     line-height: 1.6;
-    opacity: 0.9;
+    opacity: 0.95;
 }
 
 /* Card styles */
 .card {
     border-radius: 1rem;
     border: none;
+    overflow: hidden;
+}
+
+/* Auth container inside card: form + social column */
+.auth-container {
+    display: flex;
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+.auth-form {
+    flex: 2;
+}
+
+.auth-social {
+    flex: 1;
+    border-left: 1px solid rgba(0,0,0,0.06);
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-social h5 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* Common auth button sizing */
+.auth-btn {
+    height: 44px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-login {
+    background: #fff !important;
+    color: #111 !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+.btn-register {
+    border-radius: 8px;
+}
+
+.btn-social {
+    width: 100%;
+    margin-bottom: 0.6rem;
+}
+
+.btn-google {
+    background: #fff;
+    color: #111;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.btn-facebook {
+    background: #1877f2;
+    color: #fff;
+    border: none;
+}
+
+/* Center the small card title explicitly */
+.card h4 {
+    text-align: center;
+    font-weight: 700;
+}
+
+/* Row for the primary actions (login / register) aligned to left */
+.auth-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Fixed, equal width for action buttons */
+.action-btn {
+    width: 160px;
 }
 
 /* Card title icon alignment */
@@ -63,7 +146,7 @@ body {
 }
 
 /* Responsive spacing adjustments */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 992px) {
     .sidenav {
         display: none;
     }
@@ -74,5 +157,15 @@ body {
 
     .card {
         width: 100% !important;
+    }
+
+    .auth-container {
+        flex-direction: column;
+    }
+
+    .auth-social {
+        border-left: none;
+        padding-left: 0;
+        padding-top: 1rem;
     }
 }

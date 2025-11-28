@@ -19,39 +19,52 @@ function Login() {
                             <h4 className="mb-4 text-center">
                                 <i className="bi bi-door-open me-2"></i>Login
                             </h4>
-                            <Form>
-                                <Form.Group className="mb-3" controlId="formUsername">
-                                    <Form.Label>User Name</Form.Label>
-                                    <InputGroup>
-                                        <InputGroup.Text>
-                                            <i className="bi bi-person" />
-                                        </InputGroup.Text>
-                                        <Form.Control type="text" placeholder="Enter username" />
-                                    </InputGroup>
-                                </Form.Group>
 
-                                <Form.Group className="mb-3" controlId="formPassword">
-                                    <Form.Label>Password</Form.Label>
-                                    <InputGroup>
-                                        <InputGroup.Text>
-                                            <i className="bi bi-lock" />
-                                        </InputGroup.Text>
-                                        <Form.Control type="password" placeholder="Enter password" />
-                                    </InputGroup>
-                                </Form.Group>
+                            <div className="auth-container">
+                                <div className="auth-form">
+                                    <Form>
+                                        <Form.Group className="mb-3" controlId="formUsername">
+                                            <Form.Label>User Name</Form.Label>
+                                            <InputGroup>
+                                                <InputGroup.Text>
+                                                    <i className="bi bi-person" />
+                                                </InputGroup.Text>
+                                                <Form.Control type="text" placeholder="Enter username" />
+                                            </InputGroup>
+                                        </Form.Group>
 
-                                <div className="text-center mb-2">
-                                    <Button variant="dark" type="submit" className="w-75">
-                                        <i className="bi bi-box-arrow-in-right me-2"></i>Login
-                                    </Button>
+                                        <Form.Group className="mb-3" controlId="formPassword">
+                                            <Form.Label>Password</Form.Label>
+                                            <InputGroup>
+                                                <InputGroup.Text>
+                                                    <i className="bi bi-lock" />
+                                                </InputGroup.Text>
+                                                <Form.Control type="password" placeholder="Enter password" />
+                                            </InputGroup>
+                                        </Form.Group>
+
+                                        <div className="auth-actions">
+                                            <Button variant="light" type="submit" className="auth-btn action-btn btn-login">
+                                                <i className="bi bi-box-arrow-in-right me-2"></i>Login
+                                            </Button>
+
+                                            <Button variant="outline-secondary" type="button" className="auth-btn action-btn btn-register">
+                                                <i className="bi bi-person-plus me-2"></i>Register
+                                            </Button>
+                                        </div>
+                                    </Form>
                                 </div>
 
-                                <div className="text-center">
-                                    <Button variant="secondary" type="button" className="w-75">
-                                        <i className="bi bi-person-plus me-2"></i>Register
+                                <div className="auth-social">
+                                    <h5>Or sign in with</h5>
+                                    <Button className="btn-social btn-google auth-btn" type="button">
+                                        <i className="bi bi-google me-2" />Continue with Google
+                                    </Button>
+                                    <Button className="btn-social btn-facebook auth-btn" type="button">
+                                        <i className="bi bi-facebook me-2" />Continue with Facebook
                                     </Button>
                                 </div>
-                            </Form>
+                            </div>
                         </Card.Body>
                     </Card>
                 </Col>
