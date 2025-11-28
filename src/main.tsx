@@ -7,12 +7,14 @@ import './index.css'
 import App from './App.tsx'
 import Home from './pages/Home.tsx';
 import Login from './pages/auth/login.tsx';
+import Register from './pages/auth/register.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
           <Route path="home" element={<Home />} />         
