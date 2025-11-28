@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 import { useEffect } from "react";
+import feather from "feather-icons";
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
 import Footer from "./components/Footer";
@@ -12,6 +13,7 @@ import "simplebar/dist/simplebar.min.css";
 function App() {
  
   useEffect(() => {
+  feather.replace();
 
   // Find the button ONLY after render
   const toggleBtn = document.getElementById("sidebarToggle");
