@@ -1,5 +1,5 @@
 
-import { NavLink } from "react-bootstrap";
+import { NavLink } from "react-router";
 import "./Sidebar.css";
 
 const Sidebar: React.FC = () => {

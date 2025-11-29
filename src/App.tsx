@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 import { useEffect } from "react";
+// @ts-ignore
 import feather from "feather-icons";
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
