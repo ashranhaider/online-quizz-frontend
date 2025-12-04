@@ -4,7 +4,7 @@ import { BrowserRouter} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './index.css'
-import AppRoutes from './app-routes.tsx';
+import AppRoutes from './app/router/AppRoutes';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

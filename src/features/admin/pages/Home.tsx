@@ -1,10 +1,10 @@
 
 import './Home.css';
 
-const Home: React.FC = () => {
+const AdminHome: React.FC = () => {
   return (
     <>
-      <h1 className="h3 mb-3">Blank Page</h1>
+      <h1 className="h3 mb-3">Dashboard</h1>
       <div className="card shadow-none border-0 rounded-0">
         <div className="card-body">
           Empty card
@@ -16,4 +16,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default AdminHome;
