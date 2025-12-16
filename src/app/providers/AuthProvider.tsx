@@ -11,6 +11,7 @@ interface AuthContextValue {
   user: AuthenticationResponse | null;
   token: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   setAuth: (authData: AuthenticationResponse) => void;
   logout: () => void;
 }
@@ -22,10 +23,11 @@ interface Props {
 }
 
 export const AuthProvider = ({ children }: Props) => {
+  // ✅ States for user and token
   const [user, setUser] = useState<AuthenticationResponse | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load from localStorage on mount
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
@@ -34,6 +36,8 @@ export const AuthProvider = ({ children }: Props) => {
       setToken(storedToken);
       setUser(JSON.parse(storedUser) as AuthenticationResponse);
     }
+
+    setIsLoading(false);
   }, []);
 
   const setAuth = (authData: AuthenticationResponse) => {
@@ -58,6 +62,7 @@ export const AuthProvider = ({ children }: Props) => {
     user,
     token,
     isAuthenticated: !!token,
+    isLoading,
     setAuth,
     logout,
   };

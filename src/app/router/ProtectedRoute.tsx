@@ -6,8 +6,13 @@ interface Props {
 }
 
 export default function ProtectedRoute({ children }: Props) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
+
+  // ⏳ Wait until auth is initialized
+  if (isLoading) {
+    return <div>Loading...</div>; // or spinner
+  }
 
   if (!isAuthenticated) {
     return (
