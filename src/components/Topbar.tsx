@@ -2,7 +2,7 @@ import { useAuth } from '../app/providers/AuthProvider';
 import './Topbar.css';
 
 const Topbar: React.FC = () => {
-    const { logout, user } = useAuth();
+    const { logout } = useAuth();
 
     return (
         <nav className="navbar navbar-expand navbar-light navbar-bg">
