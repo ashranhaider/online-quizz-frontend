@@ -1,6 +1,9 @@
+import { useAuth } from '../app/providers/AuthProvider';
 import './Topbar.css';
 
 const Topbar: React.FC = () => {
+    const { logout, user } = useAuth();
+
     return (
         <nav className="navbar navbar-expand navbar-light navbar-bg">
             <a id="sidebarToggle" className="sidebar-toggle js-sidebar-toggle">
@@ -224,9 +227,14 @@ const Topbar: React.FC = () => {
                                 Center
                             </a>
                             <div className="dropdown-divider" />
-                            <a className="dropdown-item" href="#">
+                            <button
+                                type="button"
+                                className="dropdown-item"
+                                onClick={logout}
+                            >
                                 Log out
-                            </a>
+                            </button>
+
                         </div>
                     </li>
                 </ul>
