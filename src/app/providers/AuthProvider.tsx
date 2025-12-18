@@ -6,6 +6,8 @@ import {
   type ReactNode,
 } from "react";
 import type { AuthenticationResponse } from "../../features/auth/types/login";
+import { toastService } from "../../shared/services/toast.service";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextValue {
   user: AuthenticationResponse | null;
@@ -23,10 +25,24 @@ interface Props {
 }
 
 export const AuthProvider = ({ children }: Props) => {
-  // ✅ States for user and token
   const [user, setUser] = useState<AuthenticationResponse | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const logout = (options?: { silent?: boolean }) => {
+    setUser(null);
+    setToken(null);
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    if (!options?.silent) {
+      toastService.success("Logout successful");
+    }
+
+    navigate("/login", { replace: true });
+  };
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -34,10 +50,21 @@ export const AuthProvider = ({ children }: Props) => {
 
     if (storedToken && storedUser) {
       setToken(storedToken);
-      setUser(JSON.parse(storedUser) as AuthenticationResponse);
+      setUser(JSON.parse(storedUser));
     }
 
     setIsLoading(false);
+
+    const handleUnauthorized = () => {
+      logout({ silent: true });
+      toastService.error("Session expired. Please log in again.");
+    };
+
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+
+    return () => {
+      window.removeEventListener("auth:unauthorized", handleUnauthorized);
+    };
   }, []);
 
   const setAuth = (authData: AuthenticationResponse) => {
@@ -49,15 +76,6 @@ export const AuthProvider = ({ children }: Props) => {
     localStorage.setItem("token", authData.token);
     localStorage.setItem("user", JSON.stringify(authData));
   };
-
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "/login";
-  };
-
   const value: AuthContextValue = {
     user,
     token,
@@ -66,10 +84,14 @@ export const AuthProvider = ({ children }: Props) => {
     setAuth,
     logout,
   };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={value}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
-
 export const useAuth = (): AuthContextValue => {
   const ctx = useContext(AuthContext);
   if (!ctx) {

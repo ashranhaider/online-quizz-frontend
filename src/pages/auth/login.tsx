@@ -5,7 +5,7 @@ import { useLogin } from "../../features/auth/hooks/useLogin";
 import { useState, type FormEvent } from "react";
 
 function Login() {
-  const { mutate, isPending, error } = useLogin();
+  const { mutate, isPending } = useLogin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,9 +13,6 @@ function Login() {
     e.preventDefault();
     mutate({ email, password });
   };
-if(error){
-    console.error("Login error:", error);
-}
   return (
     <div className="login-dark">
       <div className="auth-card">

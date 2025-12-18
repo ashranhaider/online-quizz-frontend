@@ -22,13 +22,16 @@ httpClient.interceptors.request.use((config) => {
 httpClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error?.response?.status === 401) {
-      // Token invalid/expired — clear and send to login
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      // Hard redirect so all state resets
-      window.location.href = "/login";
+    const status = error?.response?.status;
+    if (status === 401) {
+      const errorCode = error.response?.data?.code;
+
+      if (errorCode === "AUTH_TOKEN_EXPIRED") {
+        window.dispatchEvent(new Event("auth:unauthorized"));
+      }
     }
+
     return Promise.reject(error);
   }
 );
+
