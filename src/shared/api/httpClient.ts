@@ -1,5 +1,6 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { env } from "../../config/env";
+import type { ApiResponse } from "../types/api-response";
 
 // Prefer Vite env var, with fallback
 const API_BASE_URL = env.apiBaseUrl ?? "https://localhost:5001";
@@ -20,15 +21,16 @@ httpClient.interceptors.request.use((config) => {
 
 // Optional: basic 401 handler
 httpClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const status = error?.response?.status;
-    if (status === 401) {
-      const errorCode = error.response?.data?.code;
+  response => response,
+  (error: AxiosError<ApiResponse<unknown>>) => {
+    const status = error.response?.status;
 
-      if (errorCode === "AUTH_TOKEN_EXPIRED") {
-        window.dispatchEvent(new Event("auth:unauthorized"));
-      }
+    if (status === 401) {
+      // token invalid / expired / revoked / missing
+      window.dispatchEvent(new Event("auth:unauthorized"));
+    }
+    if (status === 403) {
+      window.dispatchEvent(new Event("auth:forbidden"));
     }
 
     return Promise.reject(error);

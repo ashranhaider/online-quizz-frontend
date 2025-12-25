@@ -5,27 +5,32 @@ import type { AuthenticationRequest, AuthenticationResponse } from "../types/log
 import { loginApi } from "../api/login-request";
 import { toastService } from "../../../shared/services/toast.service";
 import type { ApiAxiosError } from "../../../shared/types/axios-error";
+import type { ApiResponse } from "../../../shared/types/api-response";
 
 export const useLogin = () => {
   const navigate = useNavigate();
   const { setAuth } = useAuth();
 
-  return useMutation<AuthenticationResponse, ApiAxiosError, AuthenticationRequest>({
+  return useMutation<ApiResponse<AuthenticationResponse>, ApiAxiosError, AuthenticationRequest>({
     mutationFn: loginApi,
-    onSuccess: (data) => {
-      if (!data.token) {
-        // No token = treat as failed even if 200
+    onSuccess: (response) => {
+      if (!response.data) {
         toastService.error("Login failed.");
         return;
       }
-      setAuth(data);
+      setAuth(response.data);
       toastService.success("Login successful");
       navigate("/admin/home", { replace: true });
     },
     onError: (error: ApiAxiosError) => {
-      toastService.error(
-        `Login failed. ${error.response?.data?.message ?? error.message}`
-      );
+      const apiError = error.response?.data;
+
+      const errorMessage =
+        typeof apiError?.errors === "string"
+          ? apiError.errors
+          : "Login failed.";
+
+      toastService.error(errorMessage);
     },
   });
 };

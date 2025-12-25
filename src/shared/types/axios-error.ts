@@ -1,4 +1,4 @@
 import type { AxiosError } from "axios";
-import type { ApiError } from "./api-error";
+import type { ApiResponse } from "./api-response";
 
-export type ApiAxiosError = AxiosError<ApiError>;
+export type ApiAxiosError = AxiosError<ApiResponse<unknown>>;

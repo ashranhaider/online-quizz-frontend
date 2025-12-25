@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 
 interface AuthContextValue {
   user: AuthenticationResponse | null;
-  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   setAuth: (authData: AuthenticationResponse) => void;
@@ -26,15 +25,12 @@ interface Props {
 
 export const AuthProvider = ({ children }: Props) => {
   const [user, setUser] = useState<AuthenticationResponse | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const logout = (options?: { silent?: boolean }) => {
     setUser(null);
-    setToken(null);
 
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
 
     if (!options?.silent) {
@@ -45,11 +41,9 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
+    if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
 
@@ -68,18 +62,15 @@ export const AuthProvider = ({ children }: Props) => {
   }, []);
 
   const setAuth = (authData: AuthenticationResponse) => {
-    if (!authData.token) return;
+    if (!authData.accessToken) return;
 
     setUser(authData);
-    setToken(authData.token);
 
-    localStorage.setItem("token", authData.token);
     localStorage.setItem("user", JSON.stringify(authData));
   };
   const value: AuthContextValue = {
     user,
-    token,
-    isAuthenticated: !!token,
+    isAuthenticated: !!user?.accessToken,
     isLoading,
     setAuth,
     logout,
