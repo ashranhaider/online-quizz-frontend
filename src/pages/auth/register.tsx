@@ -1,6 +1,7 @@
 import { Form, Button } from "react-bootstrap";
 import "./register.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Link } from "react-router-dom";
 
 function Register() {
   return (
@@ -34,9 +35,9 @@ function Register() {
               Register
             </Button>
 
-            <a href="#" className="forgot">
+            <Link to="/login" className="forgot">
               Already have an account? Sign in
-            </a>
+            </Link>
           </Form>
         </div>
 

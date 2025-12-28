@@ -1,6 +1,7 @@
 import { Form, Button } from "react-bootstrap";
 import "./login.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Link } from "react-router-dom";
 import { useLogin } from "../../features/auth/hooks/useLogin";
 import { useState, type FormEvent } from "react";
 
@@ -48,9 +49,13 @@ function Login() {
               {isPending ? "Logging in..." : "Login"}
             </Button>
 
-            <a href="#" className="forgot">
+            <Link to="/forgot-password" className="forgot">
               Forgot your email or password?
-            </a>
+            </Link>
+
+            <Link to="/register" className="forgot" style={{ marginTop: 8, display: 'block' }}>
+              Don't have an account? Register
+            </Link>
           </Form>
         </div>
 
