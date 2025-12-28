@@ -1,3 +1,9 @@
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
 
 export interface RegisterRequest {
   firstName: string;
@@ -9,4 +15,5 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   userId: string;
+  message: string;
 }
