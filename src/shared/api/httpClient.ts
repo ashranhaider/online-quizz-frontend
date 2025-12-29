@@ -24,8 +24,10 @@ httpClient.interceptors.response.use(
   response => response,
   (error: AxiosError<ApiResponse<unknown>>) => {
     const status = error.response?.status;
-
-    if (status === 401) {
+    
+    // Only treat as unauthorized if token was actually attached
+    const hadToken = !!localStorage.getItem("accessToken");
+    if (status === 401 && hadToken) {
       // token invalid / expired / revoked / missing
       window.dispatchEvent(new Event("auth:unauthorized"));
     }

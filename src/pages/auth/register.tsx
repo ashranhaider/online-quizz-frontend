@@ -1,38 +1,41 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, Button, Spinner } from "react-bootstrap";
-import "./register.css";
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Link } from "react-router-dom";
-import { useState, type FormEvent } from "react";
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+import "./register.css";
 import { useRegister } from "../../features/auth/hooks/useRegister";
-import type { RegisterRequest } from "../../features/auth/types/register";
+import { registerSchema, type RegisterForm } from "../../features/auth/validation/register.schema";
 
 function Register() {
-  const { mutate, isPending } = useRegister();
-  
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { register, handleSubmit, setError, formState: { errors } } =
+    useForm<RegisterForm>({
+      resolver: zodResolver(registerSchema),
+    });
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const { mutate, isPending } = useRegister((fieldErrors) => {
+    Object.entries(fieldErrors).forEach(([key, message]) => {
+      setError(key as keyof RegisterForm, { message });
+    });
+  });
 
-    const registerRequest: RegisterRequest = {
-      userName: email,
-      firstName,
-      lastName,
-      email,
-      password
-    };
-
-    mutate(registerRequest);
+  const onSubmit = (data: RegisterForm) => {
+    mutate({
+      userName: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+    });
   };
 
   return (
     <div className="login-dark">
       <div className="auth-card">
+        {/* Main form box */}
         <div className="auth-box">
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <div className="illustration">
               <i className="bi bi-person-plus-fill"></i>
             </div>
@@ -40,23 +43,24 @@ function Register() {
             <div className="d-flex gap-2">
               <Form.Group className="mb-3 flex-fill">
                 <Form.Control
-                  type="text"
                   placeholder="First name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  className="form-control"
+                  isInvalid={!!errors.firstName}
+                  {...register("firstName")}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.firstName?.message}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group className="mb-3 flex-fill">
                 <Form.Control
-                  type="text"
                   placeholder="Last name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="form-control"
+                  isInvalid={!!errors.lastName}
+                  {...register("lastName")}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.lastName?.message}
+                </Form.Control.Feedback>
               </Form.Group>
             </div>
 
@@ -64,25 +68,31 @@ function Register() {
               <Form.Control
                 type="email"
                 placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="form-control"
+                isInvalid={!!errors.email}
+                {...register("email")}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.email?.message}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Control
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="form-control"
+                isInvalid={!!errors.password}
+                {...register("password")}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.password?.message}
+              </Form.Control.Feedback>
             </Form.Group>
 
-            <Button type="submit" disabled={isPending} className="btn btn-primary w-100">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="btn btn-primary w-100"
+            >
               {isPending ? <Spinner size="sm" /> : "Register"}
             </Button>
 
@@ -92,14 +102,17 @@ function Register() {
           </Form>
         </div>
 
+        {/* OR separator (same as before) */}
         <div className="separator">
           <div className="line" />
           <div className="or">OR</div>
           <div className="line" />
         </div>
 
+        {/* Social login box (restored) */}
         <div className="auth-box social-box">
           <div className="social-title">Sign up with</div>
+
           <Button className="btn-social" type="button">
             <i className="bi bi-google" />
             <span>Continue with Google</span>
