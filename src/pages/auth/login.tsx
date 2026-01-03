@@ -1,13 +1,24 @@
 import { Form, Button } from "react-bootstrap";
 import "./login.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Link } from "react-router-dom";
+import { useLogin } from "../../features/auth/hooks/useLogin";
+import { useState, type FormEvent } from "react";
 
 function Login() {
+  const { mutate, isPending } = useLogin();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    mutate({ email, password });
+  };
   return (
     <div className="login-dark">
       <div className="auth-card">
         <div className="auth-box">
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <div className="illustration">
               <i className="bi bi-lock-fill"></i>
             </div>
@@ -15,6 +26,9 @@ function Login() {
             <Form.Group className="mb-3">
               <Form.Control
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 placeholder="Email"
                 className="form-control"
               />
@@ -23,18 +37,25 @@ function Login() {
             <Form.Group className="mb-3">
               <Form.Control
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
                 placeholder="Password"
                 className="form-control"
               />
             </Form.Group>
 
-            <Button type="submit" className="btn btn-primary w-100">
-              Log In
+            <Button type="submit" disabled={isPending} className="btn btn-primary w-100">
+              {isPending ? "Logging in..." : "Login"}
             </Button>
 
-            <a href="#" className="forgot">
+            <Link to="/forgot-password" className="forgot">
               Forgot your email or password?
-            </a>
+            </Link>
+
+            <Link to="/register" className="forgot" style={{ marginTop: 8, display: 'block' }}>
+              Don't have an account? Register
+            </Link>
           </Form>
         </div>
 
