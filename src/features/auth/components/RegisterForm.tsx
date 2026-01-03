@@ -8,9 +8,7 @@ type RegisterFormComponentProps = {
 };
 
 export default function RegisterFormComponent({ onSubmit, isSubmitting }: RegisterFormComponentProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<RegisterRequest>({
-    mode: "onSubmit",
-  });
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterRequest>();
 
   const submit = async (data: RegisterRequest) => {
     data.userName = data.email;

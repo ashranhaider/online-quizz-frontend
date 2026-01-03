@@ -1,20 +1,33 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./register.css";
 import { useRegister } from "../../features/auth/hooks/useRegister";
-import { toastService } from "../../shared/services/toast.service";
 import RegisterForm from "../../features/auth/components/RegisterForm";
 import type { RegisterRequest } from "../../features/auth/types/register";
+import { toastService } from "../../shared/services/toast.service";
+import { getApiErrorMessage } from "../../shared/utils/getApiErrorMessage";
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { mutateAsync, isPending } = useRegister();
 
   const submit = async (data: RegisterRequest) => {
-    await mutateAsync({
-        ...data,
-      });
+   try {
+      const response = await mutateAsync(data);
 
-      toastService.success("Registration successful");
+      if (!response.data) {
+        toastService.error("Registration failed.");
+        return;
+      }
+
+      toastService.success(
+        response.data.message ?? "Registration successful!"
+      );
+
       navigate("/login", { replace: true });
+    } catch (error: any) {
+      
+      const errorMessage = getApiErrorMessage(error);
+      toastService.error(errorMessage);
+    }
   };
 
   return (
