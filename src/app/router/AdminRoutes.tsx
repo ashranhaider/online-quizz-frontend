@@ -3,6 +3,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import AdminLayout from "../layout/AdminLayout";
 import AdminHome from "../../features/admin/pages/Home";
 import type { RouteObject } from "react-router-dom";
+import Quiz from "../../pages/quiz/quiz";
 
 export const AdminRoutes: RouteObject[] = [
   {
@@ -14,7 +15,8 @@ export const AdminRoutes: RouteObject[] = [
     ),
     children: [
       { index: true, element: <AdminHome /> },
-      { path: "home", element: <AdminHome /> }, // /admin/home
+      { path: "home", element: <AdminHome /> },
+      { path: "quiz", element: <Quiz /> },
     ],
   },
 ];

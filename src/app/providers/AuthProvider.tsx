@@ -16,6 +16,9 @@ interface AuthContextValue {
   setAuth: (authData: AuthenticationResponse) => void;
   logout: () => void;
 }
+const ACCESS_TOKEN_KEY = "accessToken";
+const USER_KEY = "user";
+
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -31,7 +34,8 @@ export const AuthProvider = ({ children }: Props) => {
   const logout = (options?: { silent?: boolean }) => {
     setUser(null);
 
-    localStorage.removeItem("user");
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
 
     if (!options?.silent) {
       toastService.success("Logout successful");
@@ -40,11 +44,16 @@ export const AuthProvider = ({ children }: Props) => {
     navigate("/login", { replace: true });
   };
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
 
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  useEffect(() => {
+    const storedUser = localStorage.getItem(USER_KEY);
+    const storedToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+
+    if (storedUser && storedToken) {
+      setUser({
+        user: JSON.parse(storedUser),
+        accessToken: storedToken,
+      } as AuthenticationResponse);
     }
 
     setIsLoading(false);
@@ -66,7 +75,8 @@ export const AuthProvider = ({ children }: Props) => {
 
     setUser(authData);
 
-    localStorage.setItem("user", JSON.stringify(authData));
+    localStorage.setItem(USER_KEY, JSON.stringify(authData.user));
+    localStorage.setItem(ACCESS_TOKEN_KEY, authData.accessToken);
   };
   const value: AuthContextValue = {
     user,
