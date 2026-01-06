@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'; 
-import type { ApiResponse } from "../../../shared/types/api-response";
 import type { QuizListRequest, QuizListResponse } from "../types/quiz";
 import { getQuizzes } from "../api/quiz-requests";
 

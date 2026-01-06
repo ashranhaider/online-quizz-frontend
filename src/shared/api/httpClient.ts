@@ -19,23 +19,54 @@ httpClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Optional: basic 401 handler
-httpClient.interceptors.response.use(
-  response => response,
-  (error: AxiosError<ApiResponse<unknown>>) => {
-    const status = error.response?.status;
-    
-    // Only treat as unauthorized if token was actually attached
-    const hadToken = !!localStorage.getItem("accessToken");
-    if (status === 401 && hadToken) {
-      // token invalid / expired / revoked / missing
-      window.dispatchEvent(new Event("auth:unauthorized"));
-    }
-    if (status === 403) {
-      window.dispatchEvent(new Event("auth:forbidden"));
-    }
 
+
+httpClient.interceptors.response.use(
+  response => {
+    return response;
+  },
+  (error: AxiosError<ApiResponse<unknown>>) => {
+    const token = localStorage.getItem("accessToken");
+    
+    if (error.response) {
+      const { status } = error.response!;
+      
+      switch (status) {
+        case 400:
+          console.log(error.response);
+          break;
+        case 401:
+          if (token && isJwtExpired(token)) {
+
+            // token invalid / expired
+            window.dispatchEvent(new Event("auth:unauthorized"));
+          }
+          break;
+        case 404:
+          console.log(error.response?.status);
+          break;
+        case 500:
+          console.log("server error");
+          break;
+        default:
+          console.log("an unknown error occurred");
+          break;
+      }
+    }
     return Promise.reject(error);
   }
 );
+function isJwtExpired(token: string): boolean {
+  try {
+    const payloadBase64 = token.split(".")[1];
+    const payloadJson = atob(payloadBase64);
+    const payload = JSON.parse(payloadJson);
 
+    if (!payload.exp) return true;
+
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+    return payload.exp <= nowInSeconds;
+  } catch {
+    return true;
+  }
+}

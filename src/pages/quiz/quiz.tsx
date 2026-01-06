@@ -1,7 +1,11 @@
+import { Alert } from "react-bootstrap";
 import useQuizList from "../../features/quizzes/hooks/useQuiz";
 import SkeletonLoader from "../../shared/components/SkeletonLoader";
+import { useState } from "react";
 
 function Quizzes() {
+  
+  const [showError, setshowError] = useState(true);
   const { data, isLoading, isError, error } = useQuizList({
     page: 1,
     size: 10,
@@ -22,10 +26,12 @@ function Quizzes() {
 
   if (isError) {
     return (
-      <p>
-        Error Loading Data <br />
-        {error.message}
-      </p>
+      <Alert variant="danger" onClose={() => setshowError(false)} dismissible>
+        <Alert.Heading>Error!</Alert.Heading>
+        <p>
+          {showError && (error as Error).message}
+        </p>
+      </Alert>
     );
   }
   const quizzes = data?.quizzes ?? [];
