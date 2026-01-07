@@ -1,68 +1,81 @@
-import { Alert } from "react-bootstrap";
+import { useState, useMemo } from "react";
+import DataTable from "../../shared/components/DataTable";
 import useQuizList from "../../features/quizzes/hooks/useQuiz";
+import type { Quiz } from "../../features/quizzes/types/quiz";
 import SkeletonLoader from "../../shared/components/SkeletonLoader";
-import { useState } from "react";
+import { Alert } from "react-bootstrap";
 
 function Quizzes() {
-  
-  const [showError, setshowError] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10); // ✅ NEW
+  const [searchText, setSearchText] = useState("");
+
   const { data, isLoading, isError, error } = useQuizList({
-    page: 1,
-    size: 10,
+    page,
+    size: pageSize, // ✅ now driven by state
   });
 
-  if (isLoading)
+  const quizzes = data?.quizzes ?? [];
+  const totalCount = data?.total ?? 0;
+
+  const filteredQuizzes = useMemo(() => {
+    if (!searchText) return quizzes;
+    return quizzes.filter((q) =>
+      q.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [quizzes, searchText]);
+
+  const columns = [
+    { header: "Name", accessor: "name" },
+    { header: "Unique URL", accessor: "uniqueURL" },
+    { header: "Active", accessor: (q: Quiz) => (q.isActive ? "Yes" : "No") },
+  ] as const;
+
+  if (isLoading) {
     return (
       <>
         <h1 className="h3 mb-3">Quiz</h1>
-        <div className="card shadow-none border-0 rounded-0">
+        <div className="card border-0">
           <div className="card-body">All quizzes</div>
-          <div style={{ padding: 16 }}>
+          <div className="p-3">
             <SkeletonLoader rows={5} columns={3} rowHeight={18} gap={12} />
           </div>
         </div>
       </>
     );
+  }
 
   if (isError) {
     return (
-      <Alert variant="danger" onClose={() => setshowError(false)} dismissible>
-        <Alert.Heading>Error!</Alert.Heading>
-        <p>
-          {showError && (error as Error).message}
-        </p>
+      <Alert
+        variant="danger"
+        dismissible
+        onClose={() => setShowError(false)}
+      >
+        <Alert.Heading>Error</Alert.Heading>
+        {showError && (error as Error).message}
       </Alert>
     );
   }
-  const quizzes = data?.quizzes ?? [];
+
 
   return (
-    <>
-      <h1 className="h3 mb-3">Quiz</h1>
-
-      <div className="card shadow-none border-0 rounded-0">
-        <div className="card-body">All quizzes</div>
-
-        <table className="table table-bordered">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Unique URL</th>
-              <th>Active</th>
-            </tr>
-          </thead>
-          <tbody>
-            {quizzes.map((quiz) => (
-              <tr key={quiz.id}>
-                <td>{quiz.name}</td>
-                <td>{quiz.uniqueURL}</td>
-                <td>{quiz.isActive ? "Yes" : "No"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </>
+    <DataTable
+    style={{
+      maxHeight: "500px",
+      overflowY: "auto",
+      maxWidth: "100%"
+    }}
+      data={filteredQuizzes}
+      columns={columns as any}
+      page={page}
+      pageSize={pageSize}
+      totalCount={totalCount}
+      onPageChange={setPage}
+      onPageSizeChange={setPageSize}
+      pageSizeOptions={[10, 20, 50, 100]}
+    />
   );
 }
 export default Quizzes;
