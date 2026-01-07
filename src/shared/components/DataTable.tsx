@@ -132,7 +132,7 @@ function DataTable<T>({
                 </div>
             </div>
             {/* Pagination Footer (AG-grid style) */}
-            {canPaginate && totalPages > 1 && (
+            {canPaginate  && (
                 <div className="datatable-footer d-flex align-items-center justify-content-between px-4 py-3 border-top bg-light">
                     {/* LEFT: Page size */}
                     <div className="d-flex align-items-center gap-2">
