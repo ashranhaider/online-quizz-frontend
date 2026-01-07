@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import DataTable from "../../shared/components/DataTable";
 import useQuizList from "../../features/quizzes/hooks/useQuiz";
 import type { Quiz } from "../../features/quizzes/types/quiz";
@@ -8,8 +8,7 @@ import { Alert } from "react-bootstrap";
 function Quizzes() {
   const [showError, setShowError] = useState(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10); // ✅ NEW
-  const [searchText, setSearchText] = useState("");
+  const [pageSize, setPageSize] = useState(10); 
 
   const { data, isLoading, isError, error } = useQuizList({
     page,
@@ -18,13 +17,6 @@ function Quizzes() {
 
   const quizzes = data?.quizzes ?? [];
   const totalCount = data?.total ?? 0;
-
-  const filteredQuizzes = useMemo(() => {
-    if (!searchText) return quizzes;
-    return quizzes.filter((q) =>
-      q.name.toLowerCase().includes(searchText.toLowerCase())
-    );
-  }, [quizzes, searchText]);
 
   const columns = [
     { header: "Name", accessor: "name" },
@@ -64,10 +56,11 @@ function Quizzes() {
     <DataTable
     style={{
       maxHeight: "500px",
+      minHeight: "500px",
       overflowY: "auto",
       maxWidth: "100%"
     }}
-      data={filteredQuizzes}
+      data={quizzes}
       columns={columns as any}
       page={page}
       pageSize={pageSize}

@@ -1,5 +1,5 @@
 import { Table, Form } from "react-bootstrap";
-
+import "./DataTable.css";
 export interface Column<T> {
     header: string;
     accessor: keyof T | ((row: T) => React.ReactNode);
@@ -81,60 +81,65 @@ function DataTable<T>({
     return (
         <>
             <div
-                className={`datatable-scroll ${className ?? ""}`}
+                className={`datatable-container shadow-sm ${className ?? ""}`}
                 style={style}
             >
                 {/* Search */}
                 {showSearch && typeof onSearchChange === "function" && (
-                    <Form.Control
-                        className="mb-3"
-                        placeholder={searchPlaceholder}
-                        value={searchText}
-                        onChange={(e) => onSearchChange(e.target.value)}
-                    />
+                    <div className="datatable-search p-3 border-bottom bg-light">
+                        <Form.Control
+                            className="datatable-search-input"
+                            placeholder={searchPlaceholder}
+                            value={searchText}
+                            onChange={(e) => onSearchChange(e.target.value)}
+                            size="sm"
+                        />
+                    </div>
                 )}
 
                 {/* Table */}
-                <Table bordered hover responsive>
-                    <thead>
-                        <tr>
-                            {columns.map((col, i) => (
-                                <th key={i}>{col.header}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.length === 0 ? (
+                <div className="datatable-scroll">
+                    <Table bordered hover responsive className="datatable-table mb-0">
+                        <thead className="datatable-head">
                             <tr>
-                                <td colSpan={columns.length} className="text-center">
-                                    No records found
-                                </td>
+                                {columns.map((col, i) => (
+                                    <th key={i} className="datatable-header">{col.header}</th>
+                                ))}
                             </tr>
-                        ) : (
-                            data.map((row, rowIndex) => (
-                                <tr key={rowIndex}>
-                                    {columns.map((col, colIndex) => (
-                                        <td key={colIndex}>
-                                            {typeof col.accessor === "function"
-                                                ? col.accessor(row)
-                                                : String(row[col.accessor])}
-                                        </td>
-                                    ))}
+                        </thead>
+                        <tbody className="datatable-body">
+                            {data.length === 0 ? (
+                                <tr>
+                                    <td colSpan={columns.length} className="text-center py-4">
+                                        <span className="text-muted">No records found</span>
+                                    </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </Table>
+                            ) : (
+                                data.map((row, rowIndex) => (
+                                    <tr key={rowIndex} className="datatable-row">
+                                        {columns.map((col, colIndex) => (
+                                            <td key={colIndex} className="datatable-cell">
+                                                {typeof col.accessor === "function"
+                                                    ? col.accessor(row)
+                                                    : String(row[col.accessor])}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </Table>
+                </div>
             </div>
             {/* Pagination Footer (AG-grid style) */}
             {canPaginate && totalPages > 1 && (
-                <div className="datatable-footer d-flex align-items-center justify-content-between px-3 py-2 border-top">
+                <div className="datatable-footer d-flex align-items-center justify-content-between px-4 py-3 border-top bg-light">
                     {/* LEFT: Page size */}
                     <div className="d-flex align-items-center gap-2">
-                        <span className="small text-muted">Page Size:</span>
+                        <span className="small text-muted fw-semibold">Page Size:</span>
                         <Form.Select
                             size="sm"
-                            style={{ width: 90 }}
+                            className="datatable-page-size"
                             value={pageSize}
                             onChange={(e) => handlePageSizeChange(Number(e.target.value))}
                         >
@@ -148,14 +153,14 @@ function DataTable<T>({
 
                     {/* CENTER: Row info */}
                     <div className="small text-muted">
-                        {startRow}–{endRow} of {totalCount}
+                        <span className="fw-semibold">{startRow}–{endRow}</span> of <span className="fw-semibold">{totalCount}</span>
                     </div>
 
                     {/* RIGHT: Navigation (Bootstrap Icons) */}
-                    <div className="d-flex align-items-center gap-1">
+                    <div className="d-flex align-items-center gap-2">
                         {showFirstLast && (
                             <button
-                                className="btn btn-sm btn-outline-secondary"
+                                className="btn btn-sm btn-outline-secondary datatable-nav-btn"
                                 disabled={safePage === 1}
                                 onClick={() => onPageChange?.(1)}
                                 title="First page"
@@ -165,7 +170,7 @@ function DataTable<T>({
                         )}
 
                         <button
-                            className="btn btn-sm btn-outline-secondary"
+                            className="btn btn-sm btn-outline-secondary datatable-nav-btn"
                             disabled={safePage === 1}
                             onClick={() => onPageChange?.(safePage - 1)}
                             title="Previous page"
@@ -174,14 +179,14 @@ function DataTable<T>({
                         </button>
 
                         {showPageInfo && (
-                            <span className="mx-2 small">
-                                Page <strong>{safePage}</strong> of{" "}
-                                <strong>{totalPages}</strong>
+                            <span className="mx-2 small text-muted">
+                                Page <strong className="text-dark">{safePage}</strong> of{" "}
+                                <strong className="text-dark">{totalPages}</strong>
                             </span>
                         )}
 
                         <button
-                            className="btn btn-sm btn-outline-secondary"
+                            className="btn btn-sm btn-outline-secondary datatable-nav-btn"
                             disabled={safePage === totalPages}
                             onClick={() => onPageChange?.(safePage + 1)}
                             title="Next page"
@@ -191,7 +196,7 @@ function DataTable<T>({
 
                         {showFirstLast && (
                             <button
-                                className="btn btn-sm btn-outline-secondary"
+                                className="btn btn-sm btn-outline-secondary datatable-nav-btn"
                                 disabled={safePage === totalPages}
                                 onClick={() => onPageChange?.(totalPages)}
                                 title="Last page"
