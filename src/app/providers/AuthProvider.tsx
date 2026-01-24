@@ -7,6 +7,7 @@ import {
 } from "react";
 import type { AuthenticationResponse } from "../../features/auth/types/login";
 import { toastService } from "../../shared/services/toast.service";
+import { authStorageService } from "../../shared/services/auth-storage.service";
 import { useNavigate } from "react-router-dom";
 
 interface AuthContextValue {
@@ -16,8 +17,6 @@ interface AuthContextValue {
   setAuth: (authData: AuthenticationResponse) => void;
   logout: () => void;
 }
-const ACCESS_TOKEN_KEY = "accessToken";
-const USER_KEY = "user";
 
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -33,9 +32,7 @@ export const AuthProvider = ({ children }: Props) => {
 
   const logout = (options?: { silent?: boolean }) => {
     setUser(null);
-
-    localStorage.removeItem(USER_KEY);
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    authStorageService.clearAuth();
 
     if (!options?.silent) {
       toastService.success("Logout successful");
@@ -46,14 +43,10 @@ export const AuthProvider = ({ children }: Props) => {
 
 
   useEffect(() => {
-    const storedUser = localStorage.getItem(USER_KEY);
-    const storedToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+    const authData = authStorageService.getAuth();
 
-    if (storedUser && storedToken) {
-      setUser({
-        user: JSON.parse(storedUser),
-        accessToken: storedToken,
-      } as AuthenticationResponse);
+    if (authData) {
+      setUser(authData);
     }
 
     setIsLoading(false);
@@ -74,9 +67,7 @@ export const AuthProvider = ({ children }: Props) => {
     if (!authData.accessToken) return;
 
     setUser(authData);
-
-    localStorage.setItem(USER_KEY, JSON.stringify(authData.user));
-    localStorage.setItem(ACCESS_TOKEN_KEY, authData.accessToken);
+    authStorageService.setAuth(authData);
   };
   const value: AuthContextValue = {
     user,
