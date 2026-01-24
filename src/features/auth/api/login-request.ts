@@ -1,6 +1,6 @@
 import { httpClient } from "../../../shared/api/httpClient";
 import type { ApiResponse } from "../../../shared/types/api-response";
-import type { AuthenticationRequest, AuthenticationResponse } from "../types/login";
+import type { AuthenticationRequest, AuthenticationResponse } from "../types/auth";
 
 export async function loginApi(payload: AuthenticationRequest): Promise<ApiResponse<AuthenticationResponse>> {
 

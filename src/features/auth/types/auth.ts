@@ -11,6 +11,10 @@ export interface AuthenticatedUser {
 }
 export interface AuthenticationResponse {
   user: AuthenticatedUser;
-  accessToken: string | null;
+  accessToken: string;
+  refreshToken: string;
   expiresIn: Date | null;
+}
+export interface RefreshTokenRequest {
+  refreshToken: string;
 }

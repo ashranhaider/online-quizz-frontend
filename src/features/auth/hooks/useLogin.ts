@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../app/providers/AuthProvider";
-import type { AuthenticationRequest, AuthenticationResponse } from "../types/login";
+import type { AuthenticationRequest, AuthenticationResponse } from "../types/auth";
 import { loginApi } from "../api/login-request";
 import { toastService } from "../../../shared/services/toast.service";
 import type { ApiAxiosError } from "../../../shared/types/axios-error";

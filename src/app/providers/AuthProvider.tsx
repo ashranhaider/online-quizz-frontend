@@ -5,7 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { AuthenticationResponse } from "../../features/auth/types/login";
+import type { AuthenticationResponse } from "../../features/auth/types/auth";
 import { toastService } from "../../shared/services/toast.service";
 import { authStorageService } from "../../shared/services/auth-storage.service";
 import { useNavigate } from "react-router-dom";
