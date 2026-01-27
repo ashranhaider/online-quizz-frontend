@@ -13,15 +13,22 @@ function Login() {
   const { mutate: mutateGoogle, isPending: isGooglePending } = useGoogleLogin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
+  // combine loading states
+  const isAuthLoading = isPending || isGooglePending;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     mutate({ email, password });
   };
-  
-  function handlegoogleLoginSucces(response: CredentialResponse) {
+
+  function handleGoogleLoginSuccess(response: CredentialResponse) {
     const googleToken = response.credential;
-    mutateGoogle({ IdToken: googleToken ?? "" });
+    if (!googleToken) {
+      toastService.error("Google login failed");
+      return;
+    }
+    mutateGoogle({ IdToken: googleToken });
   }
 
   return (
@@ -55,8 +62,8 @@ function Login() {
               />
             </Form.Group>
 
-            <Button type="submit" disabled={isPending} className="btn btn-primary w-100">
-              {isPending ? "Logging in..." : "Login"}
+            <Button type="submit" disabled={isAuthLoading} className="btn btn-primary w-100">
+              {isAuthLoading ? "Logging in..." : "Login"}
             </Button>
 
             <Link to="/forgot-password" className="forgot">
@@ -77,18 +84,12 @@ function Login() {
 
         <div className="auth-box social-box">
           <div className="social-title">Sign in with</div>
-          {
-            !isGooglePending &&
-            <div className="small text-muted">
-              <GoogleLogin
-                onSuccess={handlegoogleLoginSucces}
-                onError={() => {
-                  toastService.error("Google login failed")
-                }}
-              />
-            </div>
-          }
-
+          {!isAuthLoading && <GoogleLogin
+            onSuccess={handleGoogleLoginSuccess}
+            onError={() => {
+              toastService.error("Google login failed")
+            }}
+          />}
           
           {/* <Button className="btn-social" type="button">
             <i className="bi bi-facebook" />
