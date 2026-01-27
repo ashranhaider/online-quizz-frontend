@@ -2,6 +2,9 @@ export interface AuthenticationRequest {
   email: string;
   password: string;
 }
+export interface GoogleAuthenticationRequest {
+  IdToken: string;
+}
 export interface AuthenticatedUser {
   id: string | null;
   firstName: string | null;

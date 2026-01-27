@@ -4,9 +4,13 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Link } from "react-router-dom";
 import { useLogin } from "../../features/auth/hooks/useLogin";
 import { useState, type FormEvent } from "react";
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { useGoogleLogin } from "../../features/auth/hooks/useGoogleLogin";
+import { toastService } from "../../shared/services/toast.service";
 
 function Login() {
   const { mutate, isPending } = useLogin();
+  const { mutate: mutateGoogle, isPending: isGooglePending } = useGoogleLogin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,6 +18,12 @@ function Login() {
     e.preventDefault();
     mutate({ email, password });
   };
+  
+  function handlegoogleLoginSucces(response: CredentialResponse) {
+    const googleToken = response.credential;
+    mutateGoogle({ IdToken: googleToken ?? "" });
+  }
+
   return (
     <div className="login-dark">
       <div className="auth-card">
@@ -67,19 +77,27 @@ function Login() {
 
         <div className="auth-box social-box">
           <div className="social-title">Sign in with</div>
-          <Button className="btn-social" type="button">
-            <i className="bi bi-google" />
-            <span>Continue with Google</span>
-          </Button>
+          {
+            !isGooglePending &&
+            <div className="small text-muted">
+              <GoogleLogin
+                onSuccess={handlegoogleLoginSucces}
+                onError={() => {
+                  toastService.error("Google login failed")
+                }}
+              />
+            </div>
+          }
 
-          <Button className="btn-social" type="button">
+          
+          {/* <Button className="btn-social" type="button">
             <i className="bi bi-facebook" />
             <span>Continue with Facebook</span>
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>
   );
-}
 
+}
 export default Login;

@@ -1,8 +1,6 @@
 import { useMemo, useState, type ChangeEvent } from "react";
 import { AgGridReact } from "ag-grid-react";
 import {
-  AllCommunityModule,
-  ModuleRegistry,
   type ColDef,
   type ValueGetterParams,
 } from "ag-grid-community";
@@ -12,7 +10,6 @@ import SkeletonLoader from "../../shared/components/SkeletonLoader";
 import { Alert } from "react-bootstrap";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 function Quizzes() {
   const [showError, setShowError] = useState(false);
