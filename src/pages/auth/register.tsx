@@ -5,9 +5,12 @@ import RegisterForm from "../../features/auth/components/RegisterForm";
 import type { RegisterRequest } from "../../features/auth/types/register";
 import { toastService } from "../../shared/services/toast.service";
 import { getApiErrorMessage } from "../../shared/utils/getApiErrorMessage";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
+import { useGoogleLogin } from "../../features/auth/hooks/useGoogleLogin";
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { mutateAsync, isPending } = useRegister();
+    const { mutate: mutateGoogle, isPending: isGooglePending } = useGoogleLogin();
 
   const submit = async (data: RegisterRequest) => {
    try {
@@ -29,7 +32,14 @@ export default function RegisterPage() {
       toastService.error(errorMessage);
     }
   };
-
+function handleGoogleLoginSuccess(response: CredentialResponse) {
+    const googleToken = response.credential;
+    if (!googleToken) {
+      toastService.error("Google login failed");
+      return;
+    }
+    mutateGoogle({ IdToken: googleToken });
+  }
   return (
     <div className="login-dark">
       <div className="auth-card">
@@ -58,15 +68,18 @@ export default function RegisterPage() {
         <div className="auth-box social-box">
           <div className="social-title">Sign up with</div>
 
-          <button className="btn-social">
-            <i className="bi bi-google" />
-            Continue with Google
-          </button>
+           {!isGooglePending && <GoogleLogin
+            text="signup_with"
+            onSuccess={handleGoogleLoginSuccess}
+            onError={() => {
+              toastService.error("Google login failed")
+            }}
+          />}
 
-          <button className="btn-social">
+          {/* <button className="btn-social">
             <i className="bi bi-facebook" />
             Continue with Facebook
-          </button>
+          </button> */}
         </div>
 
       </div>
