@@ -78,7 +78,6 @@
   font-size:13px;
   color:#c3ccd2;
   opacity:0.95;
-  text-decoration:none;
   margin-top:12px; /* add spacing above the forgot link */
 }
 
@@ -107,7 +106,6 @@
 
 .login-dark form .forgot:hover, .login-dark form .forgot:active {
   opacity:1;
-  text-decoration:none;
 }
 
 .login-dark form .btn-primary:active {
@@ -166,3 +164,18 @@
   }
 }
 
+/* -------------------------
+   Auth Page Link Styling
+-------------------------- */
+.auth-box a,
+.auth-box a:visited {
+  color: #cbd5e1;          /* soft light text */
+  text-decoration: none;   /* remove underline */
+  transition: 0.2s ease;
+}
+
+.auth-box a:hover,
+.auth-box a:focus {
+  color: #ffffff;          /* brighten on hover */
+  text-decoration: underline;
+}

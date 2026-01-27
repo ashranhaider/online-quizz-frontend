@@ -144,3 +144,18 @@
     display:none;
   }
 }
+/* -------------------------
+   Auth Page Link Styling
+-------------------------- */
+.auth-box a,
+.auth-box a:visited {
+  color: #cbd5e1;          /* soft light text */
+  text-decoration: none;   /* remove underline */
+  transition: 0.2s ease;
+}
+
+.auth-box a:hover,
+.auth-box a:focus {
+  color: #ffffff;          /* brighten on hover */
+  text-decoration: underline;
+}
