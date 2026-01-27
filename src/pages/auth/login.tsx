@@ -85,6 +85,7 @@ function Login() {
         <div className="auth-box social-box">
           <div className="social-title">Sign in with</div>
           {!isAuthLoading && <GoogleLogin
+            size="large"
             onSuccess={handleGoogleLoginSuccess}
             onError={() => {
               toastService.error("Google login failed")
