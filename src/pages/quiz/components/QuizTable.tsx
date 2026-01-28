@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import {
   themeQuartz,
@@ -6,7 +6,9 @@ import {
   type ValueGetterParams,
 } from "ag-grid-community";
 import { useNavigate } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
 import type { Quiz } from "../../../features/quizzes/types/quiz";
+import { useDeleteQuiz } from "../../../features/quizzes/hooks/useDeleteQuiz";
 
 type QuizTableProps = {
   quizzes: Quiz[];
@@ -14,6 +16,9 @@ type QuizTableProps = {
 
 export default function QuizTable({ quizzes }: QuizTableProps) {
   const navigate = useNavigate();
+  const deleteQuizMutation = useDeleteQuiz();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
 
   const handleCopyUrl = useCallback(async (value?: string) => {
     if (!value) {
@@ -92,6 +97,10 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
               data-quiz-id={params.data?.id}
               onClick={(event) => {
                 event.stopPropagation();
+                if (params.data?.id) {
+                  setSelectedQuizId(params.data.id);
+                  setShowDeleteModal(true);
+                }
               }}
             >
               <i className="bi bi-trash" />
@@ -100,7 +109,7 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
         ),
       },
     ],
-    [handleCopyUrl]
+    [handleCopyUrl, navigate]
   );
 
   const defaultColDef = useMemo(
@@ -114,25 +123,70 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
     []
   );
 
+  const handleCloseDeleteModal = () => {
+    if (!deleteQuizMutation.isPending) {
+      setShowDeleteModal(false);
+      setSelectedQuizId(null);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedQuizId) {
+      return;
+    }
+
+    await deleteQuizMutation.mutateAsync(selectedQuizId);
+    setShowDeleteModal(false);
+    setSelectedQuizId(null);
+  };
+
   return (
-    <div className="card border-0">
-      <div className="card-body">All quizzes</div>
-      <div className="px-3 pb-3">
-        <div className="border rounded bg-white shadow-sm overflow-hidden">
-          <div
-            className="ag-theme-quartz"
-            style={{ height: 500, width: "100%" }}
-          >
-            <AgGridReact
-              rowData={quizzes}
-              theme={themeQuartz}
-              columnDefs={columnDefs}
-              defaultColDef={defaultColDef}
-              pagination={true}
-            />
+    <>
+      <div className="card border-0">
+        <div className="card-body">All quizzes</div>
+        <div className="px-3 pb-3">
+          <div className="border rounded bg-white shadow-sm overflow-hidden">
+            <div
+              className="ag-theme-quartz"
+              style={{ height: 500, width: "100%" }}
+            >
+              <AgGridReact
+                rowData={quizzes}
+                theme={themeQuartz}
+                columnDefs={columnDefs}
+                defaultColDef={defaultColDef}
+                pagination={true}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} centered>
+        <Modal.Header closeButton={!deleteQuizMutation.isPending}>
+          <Modal.Title>Delete quiz?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this quiz? This action cannot be
+          undone.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-secondary"
+            onClick={handleCloseDeleteModal}
+            disabled={deleteQuizMutation.isPending}
+          >
+            No
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleConfirmDelete}
+            disabled={deleteQuizMutation.isPending}
+          >
+            {deleteQuizMutation.isPending ? "Deleting..." : "Yes, delete"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 }
