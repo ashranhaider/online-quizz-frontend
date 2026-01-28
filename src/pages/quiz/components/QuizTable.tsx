@@ -5,6 +5,7 @@ import {
   type ColDef,
   type ValueGetterParams,
 } from "ag-grid-community";
+import { useNavigate } from "react-router-dom";
 import type { Quiz } from "../../../features/quizzes/types/quiz";
 
 type QuizTableProps = {
@@ -12,6 +13,8 @@ type QuizTableProps = {
 };
 
 export default function QuizTable({ quizzes }: QuizTableProps) {
+  const navigate = useNavigate();
+
   const handleCopyUrl = useCallback(async (value?: string) => {
     if (!value) {
       return;
@@ -73,6 +76,9 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
               data-quiz-id={params.data?.id}
               onClick={(event) => {
                 event.stopPropagation();
+                if (params.data?.id) {
+                  navigate(`/admin/quiz/${params.data.id}/edit`);
+                }
               }}
             >
               <i className="bi bi-pencil" />

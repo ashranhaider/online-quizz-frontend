@@ -5,6 +5,7 @@ import AdminHome from "../../features/admin/pages/Home";
 import type { RouteObject } from "react-router-dom";
 import Quiz from "../../pages/quiz/quiz";
 import CreateQuiz from "../../pages/quiz/create-quiz";
+import EditQuiz from "../../pages/quiz/edit-quiz";
 
 export const AdminRoutes: RouteObject[] = [
   {
@@ -19,6 +20,7 @@ export const AdminRoutes: RouteObject[] = [
       { path: "home", element: <AdminHome /> },
       { path: "quiz", element: <Quiz /> },
       { path: "quiz/create-quiz", element: <CreateQuiz /> },
+      { path: "quiz/:quizId/edit", element: <EditQuiz /> },
     ],
   },
 ];

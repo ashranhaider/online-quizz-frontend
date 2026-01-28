@@ -86,7 +86,7 @@ export default function QuizForm({
               <Form.Check
                 type="switch"
                 label="Make quiz active"
-                {...register("isActive", { required: true })}
+                {...register("isActive", { required: false })}
               />
             </Col>
 
