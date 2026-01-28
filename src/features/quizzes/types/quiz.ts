@@ -5,8 +5,6 @@ export interface Quiz {
   isActive: boolean;
 }
 export interface QuizListRequest {
-  page: number;
-  size: number;
 }
 export interface QuizListResponse {
   quizzes: Quiz[];

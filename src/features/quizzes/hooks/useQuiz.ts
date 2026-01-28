@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'; 
-import type { QuizListRequest, QuizListResponse } from "../types/quiz";
+import type {  QuizListResponse } from "../types/quiz";
 import { getQuizzes } from "../api/quiz-requests";
 
-export default function useQuizList(request: QuizListRequest){
+export default function useQuizList(){
  
   return useQuery<QuizListResponse, Error>({
-    queryKey: ["quizzes", request.page, request.size],
-    queryFn: () => getQuizzes(request),
+    queryKey: ["quizzes"],
+    queryFn: () => getQuizzes(),
     placeholderData: (previousData) => previousData,
   });
 }
