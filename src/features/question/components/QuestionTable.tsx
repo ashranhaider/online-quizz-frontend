@@ -8,6 +8,8 @@ type QuestionTableProps = {
   isFetching?: boolean;
   error?: Error | null;
   onRefresh?: () => void;
+  onEdit?: (question: Question) => void;
+  onDelete?: (question: Question) => void;
 };
 
 export default function QuestionTable({
@@ -17,6 +19,8 @@ export default function QuestionTable({
   isFetching = false,
   error,
   onRefresh,
+  onEdit,
+  onDelete,
 }: QuestionTableProps) {
   const total = questions?.length ?? 0;
 
@@ -61,6 +65,7 @@ export default function QuestionTable({
                   <th>Type</th>
                   <th className="text-center">Score</th>
                   <th className="text-center">Active</th>
+                  <th className="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -75,6 +80,24 @@ export default function QuestionTable({
                       <Badge bg={question.isActive ? "success" : "secondary"}>
                         {question.isActive ? "Yes" : "No"}
                       </Badge>
+                    </td>
+                    <td className="text-center">
+                      <div className="d-inline-flex gap-2">
+                        <button
+                          type="button"
+                          className="btn btn-outline-primary btn-sm"
+                          onClick={() => onEdit?.(question)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => onDelete?.(question)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

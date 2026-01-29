@@ -16,6 +16,7 @@ export type QuestionFormValues = {
 type QuestionFormProps = {
   initialValues?: QuestionFormValues;
   onSubmit: (values: QuestionFormValues) => Promise<void> | void;
+  onReset?: () => void;
   isSubmitting?: boolean;
   submitLabel?: string;
   successMessage?: string;
@@ -36,6 +37,7 @@ const questionTypeOptions = Object.values(QuestionTypes);
 export default function QuestionForm({
   initialValues,
   onSubmit,
+  onReset,
   isSubmitting = false,
   submitLabel = "Save Question",
   successMessage = "Question saved successfully.",
@@ -178,9 +180,9 @@ export default function QuestionForm({
                 </Alert>
               </Col>
             )}
-
             <Col xs={12}>
-              <div className="d-flex justify-content-between align-items-center pt-2">
+              <div className="d-flex justify-content-start align-items-center gap-2 pt-3">
+
                 <Button
                   variant="primary"
                   type="submit"
@@ -195,6 +197,19 @@ export default function QuestionForm({
                     submitLabel
                   )}
                 </Button>
+                {onReset && (
+                  <Button
+                    variant="secondary"
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => {
+                      reset(defaultValues);
+                      onReset();
+                    }}
+                  >
+                    Reset
+                  </Button>
+                )}
               </div>
             </Col>
           </Row>

@@ -6,7 +6,7 @@ import type { RouteObject } from "react-router-dom";
 import Quiz from "../../pages/quiz/quiz";
 import CreateQuiz from "../../pages/quiz/create-quiz";
 import EditQuiz from "../../pages/quiz/edit-quiz";
-import CreateQuestion from "../../pages/question/create-question";
+import CreateQuestion from "../../pages/question/questions";
 
 export const AdminRoutes: RouteObject[] = [
   {
