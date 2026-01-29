@@ -67,7 +67,7 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
       {
         headerName: "Actions",
         colId: "actions",
-        maxWidth: 140,
+        maxWidth: 190,
         sortable: false,
         filter: false,
         cellRenderer: (params: ValueGetterParams<Quiz, string>) => (
@@ -87,6 +87,22 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
               }}
             >
               <i className="bi bi-pencil" />
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center"
+              style={{ width: 32, height: 32 }}
+              aria-label="Manage questions"
+              title="Questions"
+              data-quiz-id={params.data?.id}
+              onClick={(event) => {
+                event.stopPropagation();
+                if (params.data?.id) {
+                  navigate(`/admin/quiz/${params.data.id}/questions`);
+                }
+              }}
+            >
+              <i className="bi bi-list-check" />
             </button>
             <button
               type="button"
