@@ -63,13 +63,15 @@ export default function QuestionForm({
       questionText: initialValues.questionText ?? "",
       questionType: initialValues.questionType ?? QuestionTypes.MultiChoice,
       isActive: Boolean(initialValues.isActive),
-      score: Number.isFinite(initialValues.score) ? initialValues.score : 1,
+      score: Number.isFinite(initialValues.score) ? initialValues.score : 0,
     };
   }, [initialValues]);
 
   useEffect(() => {
     if (normalizedInitialValues) {
       reset(normalizedInitialValues);
+    } else {
+      reset(defaultValues);
     }
   }, [normalizedInitialValues, reset]);
 
