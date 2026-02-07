@@ -1,0 +1,20 @@
+
+.avatar-icon{
+	display:inline-block;
+	vertical-align:middle;
+	color:var(--bs-body-color, #374151);
+}
+
+/* style the injected feather SVG to match other nav icons */
+.avatar-icon svg{
+	width:22px;
+	height:22px;
+	vertical-align:middle;
+	stroke:currentColor;
+	stroke-width:1.6px;
+}
+
+.nav-link .avatar-icon{
+	margin-top:-2px;
+}
+
