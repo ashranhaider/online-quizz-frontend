@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
 import type { Quiz } from "../../../features/quizzes/types/quiz";
 import { useDeleteQuiz } from "../../../features/quizzes/hooks/useDeleteQuiz";
+import { toastService } from "../../../shared/services/toast.service";
 
 type QuizTableProps = {
   quizzes: Quiz[];
@@ -27,8 +28,9 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
 
     try {
       await navigator.clipboard.writeText(value);
+      toastService.success("Copied to clipboard.");
     } catch {
-      // Ignore copy failures silently for now.
+      toastService.error("Failed to copy.");
     }
   }, []);
 
@@ -39,13 +41,13 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
         headerName: "Unique URL",
         field: "uniqueURL",
         cellRenderer: (params: ValueGetterParams<Quiz, string>) => (
-          <div className="d-flex align-items-center gap-2">
-            <span className="text-truncate" title={params.data?.uniqueURL}>
+          <div className="d-flex align-items-center gap-2 w-100">
+            <span className="text-truncate flex-grow-1" title={params.data?.uniqueURL}>
               {params.data?.uniqueURL}
             </span>
             <button
               type="button"
-              className="btn btn-light btn-sm"
+              className="btn btn-light btn-sm ms-auto"
               style={{ width: 32, height: 32 }}
               aria-label="Copy unique URL"
               title="Copy URL"
@@ -63,6 +65,13 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
         headerName: "Active",
         valueGetter: (params: ValueGetterParams<Quiz, string>) =>
           params.data?.isActive ? "Yes" : "No",
+      },
+      {
+        headerName: "Time Allowed",
+        valueGetter: (params: ValueGetterParams<Quiz, string>) => {
+          const value = params.data?.timeAllowed;
+          return typeof value === "number" ? `${value} min` : "-";
+        },
       },
       {
         headerName: "Actions",

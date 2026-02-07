@@ -33,6 +33,7 @@ function EditQuiz() {
       name: quiz.name ?? "",
       uniqueURL: quiz.uniqueURL ?? "",
       isActive: Boolean(quiz.isActive),
+      timeAllowed: typeof quiz.timeAllowed === "number" ? quiz.timeAllowed : 0,
     };
   }, [quiz]);
 

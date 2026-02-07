@@ -6,6 +6,7 @@ export type EditQuizRequest = {
   name: string;
   uniqueURL: string;
   isActive: boolean;
+  timeAllowed: number;
 };
 
 export async function editQuiz(payload: EditQuizRequest): Promise<Quiz> {

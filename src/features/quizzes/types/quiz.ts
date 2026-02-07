@@ -3,6 +3,7 @@ export interface Quiz {
   name: string;
   uniqueURL: string;
   isActive: boolean;
+  timeAllowed: number;
 }
 export interface QuizListRequest {
 }
