@@ -6,7 +6,7 @@ export default function LandingPage() {
   const [searchParams] = useSearchParams();
   const [quizCode, setQuizCode] = useState("");
 
-  // OPTION B — Automatic detection of quiz URL or quiz code
+  // OPTION B - Automatic detection of quiz URL or quiz code
   useEffect(() => {
     // check "?quizId=XXXXX"
     const quizIdFromParam = searchParams.get("quizId");
@@ -34,7 +34,7 @@ export default function LandingPage() {
     }
   }, [navigate, searchParams]);
 
-  // OPTION A — Enter Quiz Code manually
+  // OPTION A - Enter Quiz Code manually
   const handleStartQuiz = () => {
     if (!quizCode.trim()) return;
     navigate(`/quiz/${quizCode.trim()}`);
@@ -42,7 +42,6 @@ export default function LandingPage() {
 
   return (
     <div className="container d-flex flex-column align-items-center mt-5">
-
       <h1 className="fw-bold mb-3">Welcome to Online Quiz Platform</h1>
       <p className="lead text-muted mb-4">
         Enter the quiz code or use your quiz link to begin.
