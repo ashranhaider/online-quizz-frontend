@@ -26,40 +26,36 @@ export default function QuestionOptionsForm({
   remove,
   setValue,
 }: QuestionOptionsFormProps) {
+  const handleAddOption = () => {
+    append({
+      optionText: "",
+      isCorrect: false,
+    });
+  };
+
   return (
-    <div className="d-flex flex-column gap-3">
-      <div className="d-flex justify-content-between align-items-center">
+    <Card className="border">
+      <Card.Body className="d-flex flex-column gap-3">
         <div>
           <h6 className="mb-1 fw-semibold">Question Options</h6>
           <p className="text-muted mb-0">
             Optional answers for multi-choice or true/false questions.
           </p>
         </div>
-        <Button
-          variant="outline-primary"
-          type="button"
-          onClick={() =>
-            append({
-              optionText: "",
-              isCorrect: false,
-            })
-          }
-        >
-          Add Option
-        </Button>
-      </div>
 
-      {fields.length === 0 && (
-        <Alert variant="light" className="border mb-0">
-          No options added yet.
-        </Alert>
-      )}
+        {fields.length === 0 && (
+          <Alert variant="light" className="border mb-0">
+            No options added yet. Use the add button to create the first option.
+          </Alert>
+        )}
 
-      {fields.map((field, index) => (
-        <Card key={field.id} className="border">
-          <Card.Body>
-            <Row className="g-3">
-              <Col xs={12} md={8}>
+        {fields.map((field, index) => (
+          <div
+            key={field.id}
+            className="border rounded p-2 bg-light"
+          >
+            <Row className="g-2 align-items-center">
+              <Col xs={12} md={6}>
                 <Form.Group controlId={`option-text-${field.id}`}>
                   <Form.Label className="fw-semibold">Option Text</Form.Label>
                   <Form.Control
@@ -76,40 +72,49 @@ export default function QuestionOptionsForm({
                 </Form.Group>
               </Col>
 
-              <Col xs={12}>
-                <div className="d-flex justify-content-between align-items-center">
-                  <Form.Check
-                    type="switch"
-                    label="Mark as correct"
-                    {...register(`questionOptions.${index}.isCorrect`, {
-                      onChange: event => {
-                        if (event.target.checked) {
-                          fields.forEach((_, optionIndex) => {
-                            if (optionIndex !== index) {
-                              setValue(
-                                `questionOptions.${optionIndex}.isCorrect`,
-                                false,
-                                { shouldDirty: true }
-                              );
-                            }
-                          });
-                        }
-                      },
-                    })}
-                  />
-                  <Button
-                    variant="outline-danger"
-                    type="button"
-                    onClick={() => remove(index)}
-                  >
-                    Remove
-                  </Button>
-                </div>
+              <Col xs={12} md={3}>
+                <Form.Label className="fw-semibold d-block">Correct</Form.Label>
+                <Form.Check
+                  type="switch"
+                  label="Mark as correct"
+                  {...register(`questionOptions.${index}.isCorrect`, {
+                    onChange: event => {
+                      if (event.target.checked) {
+                        fields.forEach((_, optionIndex) => {
+                          if (optionIndex !== index) {
+                            setValue(
+                              `questionOptions.${optionIndex}.isCorrect`,
+                              false,
+                              { shouldDirty: true }
+                            );
+                          }
+                        });
+                      }
+                    },
+                  })}
+                />
+              </Col>
+
+              <Col xs={12} md={3} className="d-flex">
+                <Button
+                  variant="outline-danger"
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="w-100"
+                >
+                  Remove
+                </Button>
               </Col>
             </Row>
-          </Card.Body>
-        </Card>
-      ))}
-    </div>
+          </div>
+        ))}
+
+        <div>
+          <Button variant="outline-primary" type="button" onClick={handleAddOption}>
+            {fields.length > 0 ? "Add another option" : "Add option"}
+          </Button>
+        </div>
+      </Card.Body>
+    </Card>
   );
 }

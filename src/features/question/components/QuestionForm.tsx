@@ -43,6 +43,34 @@ const defaultValues: QuestionFormValues = {
 
 const questionTypeOptions = Object.values(QuestionTypes);
 
+const isOptionQuestionType = (questionType: QuestionTypesValue) =>
+  questionType === QuestionTypes.MultiChoice ||
+  questionType === QuestionTypes.TrueFalse;
+
+const normalizeQuestionOptions = (options?: QuestionOptionFormValues[]) =>
+  Array.isArray(options)
+    ? options.map(option => ({
+        optionText: option.optionText ?? "",
+        isCorrect: Boolean(option.isCorrect),
+      }))
+    : [];
+
+const normalizeQuestionFormValues = (
+  initialValues: QuestionFormValues
+): QuestionFormValues => ({
+  questionText: initialValues.questionText ?? "",
+  questionType: initialValues.questionType ?? QuestionTypes.MultiChoice,
+  isActive: Boolean(initialValues.isActive),
+  score: Number.isFinite(initialValues.score) ? initialValues.score : 0,
+  questionOptions: normalizeQuestionOptions(initialValues.questionOptions),
+});
+
+const sanitizeQuestionOptions = (options?: QuestionOptionFormValues[]) =>
+  (options ?? []).map(option => ({
+    optionText: option.optionText.trim(),
+    isCorrect: option.isCorrect,
+  }));
+
 export default function QuestionForm({
   initialValues,
   onSubmit,
@@ -73,18 +101,7 @@ export default function QuestionForm({
       return undefined;
     }
 
-    return {
-      questionText: initialValues.questionText ?? "",
-      questionType: initialValues.questionType ?? QuestionTypes.MultiChoice,
-      isActive: Boolean(initialValues.isActive),
-      score: Number.isFinite(initialValues.score) ? initialValues.score : 0,
-      questionOptions: Array.isArray(initialValues.questionOptions)
-        ? initialValues.questionOptions.map(option => ({
-            optionText: option.optionText ?? "",
-            isCorrect: Boolean(option.isCorrect),
-          }))
-        : [],
-    };
+    return normalizeQuestionFormValues(initialValues);
   }, [initialValues]);
 
   const { fields, append, remove } = useFieldArray({
@@ -93,9 +110,7 @@ export default function QuestionForm({
   });
 
   const watchedQuestionType = watch("questionType");
-  const shouldShowOptions =
-    watchedQuestionType === QuestionTypes.MultiChoice ||
-    watchedQuestionType === QuestionTypes.TrueFalse;
+  const shouldShowOptions = isOptionQuestionType(watchedQuestionType);
 
   useEffect(() => {
     if (!shouldShowOptions && fields.length > 0) {
@@ -118,11 +133,7 @@ export default function QuestionForm({
       questionType: data.questionType,
       isActive: data.isActive,
       score: data.score,
-      questionOptions:
-        data.questionOptions?.map(option => ({
-          optionText: option.optionText.trim(),
-          isCorrect: option.isCorrect,
-        })) ?? [],
+      questionOptions: sanitizeQuestionOptions(data.questionOptions),
     });
 
     if (resetOnSuccess) {
