@@ -1,13 +1,41 @@
 import { Form, Button } from "react-bootstrap";
 import "./login.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Link } from "react-router-dom";
+import { useLogin } from "../../features/auth/hooks/useLogin";
+import { useState, type FormEvent } from "react";
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { useGoogleLogin } from "../../features/auth/hooks/useGoogleLogin";
+import { toastService } from "../../shared/services/toast.service";
 
 function Login() {
+  const { mutate, isPending } = useLogin();
+  const { mutate: mutateGoogle, isPending: isGooglePending } = useGoogleLogin();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  
+  // combine loading states
+  const isAuthLoading = isPending || isGooglePending;
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    mutate({ email, password });
+  };
+
+  function handleGoogleLoginSuccess(response: CredentialResponse) {
+    const googleToken = response.credential;
+    if (!googleToken) {
+      toastService.error("Google login failed");
+      return;
+    }
+    mutateGoogle({ IdToken: googleToken });
+  }
+
   return (
     <div className="login-dark">
       <div className="auth-card">
         <div className="auth-box">
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <div className="illustration">
               <i className="bi bi-lock-fill"></i>
             </div>
@@ -15,6 +43,9 @@ function Login() {
             <Form.Group className="mb-3">
               <Form.Control
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 placeholder="Email"
                 className="form-control"
               />
@@ -23,18 +54,25 @@ function Login() {
             <Form.Group className="mb-3">
               <Form.Control
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
                 placeholder="Password"
                 className="form-control"
               />
             </Form.Group>
 
-            <Button type="submit" className="btn btn-primary w-100">
-              Log In
+            <Button type="submit" disabled={isAuthLoading} className="btn btn-primary w-100">
+              {isAuthLoading ? "Logging in..." : "Login"}
             </Button>
 
-            <a href="#" className="forgot">
+            <Link to="/forgot-password" className="forgot">
               Forgot your email or password?
-            </a>
+            </Link>
+
+            <Link to="/register" className="forgot" style={{ marginTop: 8, display: 'block' }}>
+              Don't have an account? Register
+            </Link>
           </Form>
         </div>
 
@@ -46,19 +84,22 @@ function Login() {
 
         <div className="auth-box social-box">
           <div className="social-title">Sign in with</div>
-          <Button className="btn-social" type="button">
-            <i className="bi bi-google" />
-            <span>Continue with Google</span>
-          </Button>
-
-          <Button className="btn-social" type="button">
+          {!isAuthLoading && <GoogleLogin
+            size="large"
+            onSuccess={handleGoogleLoginSuccess}
+            onError={() => {
+              toastService.error("Google login failed")
+            }}
+          />}
+          
+          {/* <Button className="btn-social" type="button">
             <i className="bi bi-facebook" />
             <span>Continue with Facebook</span>
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>
   );
-}
 
+}
 export default Login;

@@ -10,17 +10,26 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@popperjs/core": "^2.11.8",
-    "axios": "^1.8.4",
+    "@react-oauth/google": "^0.13.4",
+    "@tanstack/react-query": "^5.90.12",
+    "ag-grid-community": "^32.2.0",
+    "ag-grid-react": "^32.2.0",
+    "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "feather-icons": "^4.29.2",
+    "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.69.0",
     "react-router": "^7.5.1",
     "react-router-dom": "^7.9.6",
-    "simplebar": "^6.3.3"
+    "react-toastify": "^11.0.5",
+    "simplebar": "^6.3.3",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -33,6 +42,7 @@
     "globals": "^16.0.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-plugin-static-copy": "^3.1.4"
   }
 }

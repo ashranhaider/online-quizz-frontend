@@ -1,0 +1,69 @@
+/* Use same background as login page but keep styles scoped to error pages */
+.error-page{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:48px 20px;
+  background:#475d62 url(/star-sky.jpg) center/cover no-repeat;
+}
+
+/* Dark card similar to auth-box to match login/register pages */
+.error-card{
+  background-color:#1e2833;
+  color:#fff;
+  padding:28px 32px;
+  border-radius:10px;
+  box-shadow:3px 6px 18px rgba(0,0,0,0.35);
+  text-align:center;
+  max-width:520px;
+  width:100%;
+}
+
+.error-code{
+  font-size:72px;
+  font-weight:800;
+  color:#2980ef;
+}
+
+.error-title{
+  font-size:20px;
+  font-weight:700;
+  margin-top:6px;
+}
+
+.error-desc{
+  color:#c3ccd2;
+  margin-top:10px;
+}
+
+.error-actions{
+  margin-top:18px;
+  display:flex;
+  gap:12px;
+  justify-content:center;
+}
+
+.error-actions .btn{
+  padding:10px 16px;
+  border-radius:6px;
+  background:#214a80;
+  border:none;
+}
+
+.error-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 16px;
+  border-radius:6px;
+  color:#c3ccd2;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+@media (max-width:768px){
+  .error-card{padding:20px}
+  .error-code{font-size:56px}
+}
+
