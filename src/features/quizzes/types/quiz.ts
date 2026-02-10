@@ -4,6 +4,7 @@ export interface Quiz {
   uniqueURL: string;
   isActive: boolean;
   timeAllowed: number;
+  totalQuestionsCount?: number;
 }
 export interface QuizListRequest {
 }

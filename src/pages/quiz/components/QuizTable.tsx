@@ -4,6 +4,7 @@ import {
   themeQuartz,
   type ColDef,
   type ValueGetterParams,
+  type RowClickedEvent,
 } from "ag-grid-community";
 import { useNavigate } from "react-router-dom";
 import type { Quiz } from "../../../features/quizzes/types/quiz";
@@ -74,9 +75,42 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
         },
       },
       {
+        headerName: "Questions",
+        colId: "questions",
+        maxWidth: 200,
+        sortable: false,
+        filter: false,
+        cellRenderer: (params: ValueGetterParams<Quiz, string>) => {
+          const count =
+            typeof params.data?.totalQuestionsCount === "number"
+              ? params.data.totalQuestionsCount
+              : 0;
+          return (
+            <div className="d-flex align-items-center gap-2">
+              <span className="text-muted">{count} questions</span>
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm"
+                aria-label="Manage questions"
+                title="Manage questions"
+                data-quiz-id={params.data?.id}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (params.data?.id) {
+                    navigate(`/admin/quiz/${params.data.id}?tab=questions`);
+                  }
+                }}
+              >
+                Manage
+              </button>
+            </div>
+          );
+        },
+      },
+      {
         headerName: "Actions",
         colId: "actions",
-        maxWidth: 190,
+        maxWidth: 140,
         sortable: false,
         filter: false,
         cellRenderer: (params: ValueGetterParams<Quiz, string>) => (
@@ -96,22 +130,6 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
               }}
             >
               <i className="bi bi-pencil" />
-            </button>
-            <button
-              type="button"
-              className="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center"
-              style={{ width: 32, height: 32 }}
-              aria-label="Manage questions"
-              title="Questions"
-              data-quiz-id={params.data?.id}
-              onClick={(event) => {
-                event.stopPropagation();
-                if (params.data?.id) {
-                  navigate(`/admin/quiz/${params.data.id}/questions`);
-                }
-              }}
-            >
-              <i className="bi bi-list-check" />
             </button>
             <button
               type="button"
@@ -165,6 +183,15 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
     setSelectedQuizId(null);
   };
 
+  const handleRowClicked = useCallback(
+    (event: RowClickedEvent<Quiz>) => {
+      if (event.data?.id) {
+        navigate(`/admin/quiz/${event.data.id}`);
+      }
+    },
+    [navigate]
+  );
+
   return (
     <>
       <div className="card border-0">
@@ -181,6 +208,7 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}
+                onRowClicked={handleRowClicked}
               />
             </div>
           </div>
