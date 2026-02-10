@@ -1,16 +1,23 @@
 import { useEffect, useMemo } from "react";
 import { Card, Form, Row, Col, Button, Spinner, Alert } from "react-bootstrap";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   QuestionTypes,
   type QuestionTypes as QuestionTypesValue,
 } from "../types/question";
+import QuestionOptionsForm from "./QuestionOptionsForm";
 
 export type QuestionFormValues = {
   questionText: string;
   questionType: QuestionTypesValue;
   isActive: boolean;
   score: number;
+  questionOptions?: QuestionOptionFormValues[];
+};
+
+export type QuestionOptionFormValues = {
+  optionText: string;
+  isCorrect: boolean;
 };
 
 type QuestionFormProps = {
@@ -21,6 +28,7 @@ type QuestionFormProps = {
   submitLabel?: string;
   successMessage?: string;
   errorMessage?: string;
+  validationMessage?: string;
   showSuccess?: boolean;
   resetOnSuccess?: boolean;
 };
@@ -30,6 +38,7 @@ const defaultValues: QuestionFormValues = {
   questionType: QuestionTypes.MultiChoice,
   isActive: true,
   score: 1,
+  questionOptions: [],
 };
 
 const questionTypeOptions = Object.values(QuestionTypes);
@@ -42,13 +51,18 @@ export default function QuestionForm({
   submitLabel = "Save Question",
   successMessage = "Question saved successfully.",
   errorMessage,
+  validationMessage,
   showSuccess = false,
   resetOnSuccess = false,
 }: QuestionFormProps) {
   const {
+    control,
     register,
     handleSubmit,
     reset,
+    setValue,
+    clearErrors,
+    watch,
     formState: { errors },
   } = useForm<QuestionFormValues>({
     defaultValues: initialValues ?? defaultValues,
@@ -64,8 +78,31 @@ export default function QuestionForm({
       questionType: initialValues.questionType ?? QuestionTypes.MultiChoice,
       isActive: Boolean(initialValues.isActive),
       score: Number.isFinite(initialValues.score) ? initialValues.score : 0,
+      questionOptions: Array.isArray(initialValues.questionOptions)
+        ? initialValues.questionOptions.map(option => ({
+            optionText: option.optionText ?? "",
+            isCorrect: Boolean(option.isCorrect),
+          }))
+        : [],
     };
   }, [initialValues]);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "questionOptions",
+  });
+
+  const watchedQuestionType = watch("questionType");
+  const shouldShowOptions =
+    watchedQuestionType === QuestionTypes.MultiChoice ||
+    watchedQuestionType === QuestionTypes.TrueFalse;
+
+  useEffect(() => {
+    if (!shouldShowOptions && fields.length > 0) {
+      setValue("questionOptions", []);
+      clearErrors("questionOptions");
+    }
+  }, [clearErrors, fields.length, setValue, shouldShowOptions]);
 
   useEffect(() => {
     if (normalizedInitialValues) {
@@ -81,6 +118,11 @@ export default function QuestionForm({
       questionType: data.questionType,
       isActive: data.isActive,
       score: data.score,
+      questionOptions:
+        data.questionOptions?.map(option => ({
+          optionText: option.optionText.trim(),
+          isCorrect: option.isCorrect,
+        })) ?? [],
     });
 
     if (resetOnSuccess) {
@@ -159,6 +201,14 @@ export default function QuestionForm({
               </Form.Group>
             </Col>
 
+            {validationMessage && (
+              <Col xs={12}>
+                <Alert variant="danger" className="mb-0">
+                  {validationMessage}
+                </Alert>
+              </Col>
+            )}
+
             <Col xs={12}>
               <Form.Check
                 type="switch"
@@ -166,6 +216,19 @@ export default function QuestionForm({
                 {...register("isActive")}
               />
             </Col>
+
+            {shouldShowOptions && (
+              <Col xs={12}>
+                <QuestionOptionsForm
+                  fields={fields}
+                  register={register}
+                  errors={errors}
+                  append={append}
+                  remove={remove}
+                  setValue={setValue}
+                />
+              </Col>
+            )}
 
             {errorMessage && (
               <Col xs={12}>

@@ -1,4 +1,5 @@
-import { Alert, Badge, Table } from "react-bootstrap";
+import { Fragment, useState } from "react";
+import { Alert, Badge, Collapse, Table } from "react-bootstrap";
 import type { Question } from "../types/question";
 
 type QuestionTableProps = {
@@ -10,6 +11,7 @@ type QuestionTableProps = {
   onRefresh?: () => void;
   onEdit?: (question: Question) => void;
   onDelete?: (question: Question) => void;
+  onDeleteOption?: (optionId: number) => void;
 };
 
 export default function QuestionTable({
@@ -21,8 +23,17 @@ export default function QuestionTable({
   onRefresh,
   onEdit,
   onDelete,
+  onDeleteOption,
 }: QuestionTableProps) {
   const total = questions?.length ?? 0;
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+
+  const toggleRow = (questionId: string) => {
+    setExpandedRows(prev => ({
+      ...prev,
+      [questionId]: !prev[questionId],
+    }));
+  };
 
   return (
     <div className="card border-0 shadow-sm">
@@ -70,36 +81,119 @@ export default function QuestionTable({
               </thead>
               <tbody>
                 {questions?.map((question) => (
-                  <tr key={question.id}>
-                    <td className="text-truncate" style={{ maxWidth: 220 }}>
-                      {question.questionText}
-                    </td>
-                    <td>{question.questionType}</td>
-                    <td className="text-center">{question.score}</td>
-                    <td className="text-center">
-                      <Badge bg={question.isActive ? "success" : "secondary"}>
-                        {question.isActive ? "Yes" : "No"}
-                      </Badge>
-                    </td>
-                    <td className="text-center">
-                      <div className="d-inline-flex gap-2">
-                        <button
-                          type="button"
-                          className="btn btn-outline-primary btn-sm"
-                          onClick={() => onEdit?.(question)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-danger btn-sm"
-                          onClick={() => onDelete?.(question)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                  <Fragment key={question.id}>
+                    <tr>
+                      <td className="text-truncate" style={{ maxWidth: 220 }}>
+                        {question.questionText}
+                      </td>
+                      <td>{question.questionType}</td>
+                      <td className="text-center">{question.score}</td>
+                      <td className="text-center">
+                        <Badge bg={question.isActive ? "success" : "secondary"}>
+                          {question.isActive ? "Yes" : "No"}
+                        </Badge>
+                      </td>
+                      <td className="text-center">
+                        <div className="d-inline-flex gap-2">
+                          {question.questionOptions &&
+                            question.questionOptions.length > 0 && (
+                              <button
+                                type="button"
+                                className="btn btn-outline-secondary btn-sm"
+                                onClick={() => toggleRow(question.id)}
+                                aria-expanded={Boolean(expandedRows[question.id])}
+                                aria-controls={`question-options-${question.id}`}
+                              >
+                                {expandedRows[question.id]
+                                  ? "Hide Options"
+                                  : "Show Options"}
+                              </button>
+                            )}
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() => onEdit?.(question)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-danger btn-sm"
+                            onClick={() => onDelete?.(question)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    {question.questionOptions &&
+                      question.questionOptions.length > 0 && (
+                        <tr>
+                          <td colSpan={5} className="bg-light p-0 border-0">
+                            <Collapse in={Boolean(expandedRows[question.id])}>
+                              <div id={`question-options-${question.id}`}>
+                                <div className="p-3">
+                                  <div className="small fw-semibold text-muted mb-2">
+                                    Options
+                                  </div>
+                                  <div className="table-responsive">
+                                    <Table
+                                      bordered
+                                      hover
+                                      size="sm"
+                                      className="mb-0 bg-white"
+                                    >
+                                      <thead>
+                                        <tr>
+                                          <th style={{ width: "60%" }}>
+                                            Option
+                                          </th>
+                                          <th style={{ width: "20%" }}>
+                                            Correct
+                                          </th>
+                                          <th style={{ width: "20%" }}>
+                                            Actions
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {question.questionOptions.map(option => (
+                                          <tr key={option.id}>
+                                            <td>{option.optionText}</td>
+                                            <td>
+                                              {option.isCorrect ? (
+                                                <Badge bg="success" pill>
+                                                  Yes
+                                                </Badge>
+                                              ) : (
+                                                <Badge bg="secondary" pill>
+                                                  No
+                                                </Badge>
+                                              )}
+                                            </td>
+                                            <td>
+                                              <button
+                                                type="button"
+                                                className="btn btn-outline-danger btn-sm"
+                                                onClick={() =>
+                                                  onDeleteOption?.(option.id)
+                                                }
+                                              >
+                                                Delete
+                                              </button>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </Table>
+                                  </div>
+                                </div>
+                              </div>
+                            </Collapse>
+                          </td>
+                        </tr>
+                      )}
+                  </Fragment>
                 ))}
               </tbody>
             </Table>

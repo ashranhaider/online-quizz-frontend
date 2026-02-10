@@ -5,23 +5,32 @@ import QuestionForm, {
   type QuestionFormValues,
 } from "../../features/question/components/QuestionForm";
 import QuestionDeleteModal from "../../features/question/components/QuestionDeleteModal";
+import QuestionOptionDeleteModal from "../../features/question/components/QuestionOptionDeleteModal";
 import QuestionTable from "../../features/question/components/QuestionTable";
 import { useCreateQuestion } from "../../features/question/hooks/useCreateQuestion";
 import { useDeleteQuestion } from "../../features/question/hooks/useDeleteQuestion";
+import { useDeleteQuestionOption } from "../../features/question/hooks/useDeleteQuestionOption";
 import { useEditQuestion } from "../../features/question/hooks/useEditQuestion";
 import { useQuestions } from "../../features/question/hooks/useQuestions";
 import { toastService } from "../../shared/services/toast.service";
-import type { Question } from "../../features/question/types/question";
+import type { Question, QuestionOption } from "../../features/question/types/question";
+import { QuestionTypes } from "../../features/question/types/question";
 
 function CreateQuestion() {
   const { quizId } = useParams();
   const createQuestionMutation = useCreateQuestion();
   const editQuestionMutation = useEditQuestion();
   const deleteQuestionMutation = useDeleteQuestion();
+  const deleteQuestionOptionMutation = useDeleteQuestionOption();
   const questionsQuery = useQuestions(quizId);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
+  const [showOptionDeleteModal, setShowOptionDeleteModal] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<QuestionOption | null>(
+    null
+  );
+  const [optionValidationMessage, setOptionValidationMessage] = useState("");
 
   const parsedQuizId = useMemo(() => {
     const value = Number(quizId);
@@ -31,6 +40,22 @@ function CreateQuestion() {
   const handleSaveQuestion = async (values: QuestionFormValues) => {
     if (!parsedQuizId) {
       return;
+    }
+
+    const shouldIncludeOptions =
+      values.questionType === QuestionTypes.MultiChoice ||
+      values.questionType === QuestionTypes.TrueFalse;
+
+    if (shouldIncludeOptions) {
+      const correctCount =
+        values.questionOptions?.filter(option => option.isCorrect).length ?? 0;
+      if (correctCount > 1) {
+        const message =
+          "More than one option has been selected as true. Please select only 1 correct option.";
+        setOptionValidationMessage(message);
+        toastService.error(message);
+        return;
+      }
     }
 
     if (editingQuestion) {
@@ -45,10 +70,15 @@ function CreateQuestion() {
       await createQuestionMutation.mutateAsync({
         ...values,
         quizzId: parsedQuizId,
+        questionOptions: shouldIncludeOptions
+          ? values.questionOptions?.filter(option => option.optionText.trim()) ??
+            null
+          : null,
       });
       toastService.success("Question created successfully.");
     }
 
+    setOptionValidationMessage("");
     void questionsQuery.refetch();
   };
 
@@ -70,6 +100,24 @@ function CreateQuestion() {
     }
     setShowDeleteModal(false);
     setSelectedQuestion(null);
+    void questionsQuery.refetch();
+  };
+
+  const handleCloseOptionDeleteModal = () => {
+    if (!deleteQuestionOptionMutation.isPending) {
+      setShowOptionDeleteModal(false);
+      setSelectedOption(null);
+    }
+  };
+
+  const handleConfirmOptionDelete = async () => {
+    if (!selectedOption) {
+      return;
+    }
+
+    await deleteQuestionOptionMutation.mutateAsync(selectedOption.id);
+    setShowOptionDeleteModal(false);
+    setSelectedOption(null);
     void questionsQuery.refetch();
   };
 
@@ -108,6 +156,11 @@ function CreateQuestion() {
                       questionType: editingQuestion.questionType,
                       isActive: editingQuestion.isActive,
                       score: editingQuestion.score,
+                      questionOptions:
+                        editingQuestion.questionOptions?.map(option => ({
+                          optionText: option.optionText ?? "",
+                          isCorrect: Boolean(option.isCorrect),
+                        })) ?? [],
                     }
                   : undefined
               }
@@ -119,9 +172,13 @@ function CreateQuestion() {
                 (createQuestionMutation.error as Error | undefined)?.message ||
                 (editQuestionMutation.error as Error | undefined)?.message
               }
+              validationMessage={optionValidationMessage}
               submitLabel={editingQuestion ? "Update Question" : "Save Question"}
               resetOnSuccess={!editingQuestion}
-              onReset={() => setEditingQuestion(null)}
+              onReset={() => {
+                setEditingQuestion(null);
+                setOptionValidationMessage("");
+              }}
             />
           </div>
         </div>
@@ -142,6 +199,15 @@ function CreateQuestion() {
                 setSelectedQuestion(question);
                 setShowDeleteModal(true);
               }}
+              onDeleteOption={(optionId) => {
+                const option = questionsQuery.data
+                  ?.flatMap(question => question.questionOptions ?? [])
+                  .find(item => item.id === optionId);
+                if (option) {
+                  setSelectedOption(option);
+                  setShowOptionDeleteModal(true);
+                }
+              }}
             />
           </div>
         </div>
@@ -153,6 +219,13 @@ function CreateQuestion() {
         question={selectedQuestion}
         onCancel={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
+      />
+      <QuestionOptionDeleteModal
+        show={showOptionDeleteModal}
+        isDeleting={deleteQuestionOptionMutation.isPending}
+        option={selectedOption}
+        onCancel={handleCloseOptionDeleteModal}
+        onConfirm={handleConfirmOptionDelete}
       />
     </>
   );
