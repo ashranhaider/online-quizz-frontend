@@ -3,6 +3,7 @@ import type {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
+  UseFormClearErrors,
 } from "react-hook-form";
 import type { QuestionFormValues } from "./QuestionForm";
 
@@ -16,6 +17,7 @@ type QuestionOptionsFormProps = {
   }) => void;
   remove: (index: number) => void;
   setValue: UseFormSetValue<QuestionFormValues>;
+  clearErrors: UseFormClearErrors<QuestionFormValues>;
 };
 
 export default function QuestionOptionsForm({
@@ -25,6 +27,7 @@ export default function QuestionOptionsForm({
   append,
   remove,
   setValue,
+  clearErrors,
 }: QuestionOptionsFormProps) {
   const handleAddOption = () => {
     append({
@@ -89,6 +92,7 @@ export default function QuestionOptionsForm({
                             );
                           }
                         });
+                        clearErrors("questionOptions");
                       }
                     },
                   })}

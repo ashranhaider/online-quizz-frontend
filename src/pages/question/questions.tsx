@@ -29,7 +29,6 @@ function CreateQuestion() {
   const [selectedOption, setSelectedOption] = useState<QuestionOption | null>(
     null
   );
-  const [optionValidationMessage, setOptionValidationMessage] = useState("");
 
   const parsedQuizId = useMemo(() => {
     const value = Number(quizId);
@@ -44,18 +43,6 @@ function CreateQuestion() {
     const shouldIncludeOptions =
       values.questionType === QuestionTypes.MultiChoice ||
       values.questionType === QuestionTypes.TrueFalse;
-
-    if (shouldIncludeOptions) {
-      const correctCount =
-        values.questionOptions?.filter(option => option.isCorrect).length ?? 0;
-      if (correctCount > 1) {
-        const message =
-          "More than one option has been selected as true. Please select only 1 correct option.";
-        setOptionValidationMessage(message);
-        toastService.error(message);
-        return;
-      }
-    }
 
     if (editingQuestion) {
       await editQuestionMutation.mutateAsync({
@@ -77,7 +64,6 @@ function CreateQuestion() {
       toastService.success("Question created successfully.");
     }
 
-    setOptionValidationMessage("");
     void questionsQuery.refetch();
   };
 
@@ -171,12 +157,10 @@ function CreateQuestion() {
                 (createQuestionMutation.error as Error | undefined)?.message ||
                 (editQuestionMutation.error as Error | undefined)?.message
               }
-              validationMessage={optionValidationMessage}
               submitLabel={editingQuestion ? "Update Question" : "Save Question"}
               resetOnSuccess={!editingQuestion}
               onReset={() => {
                 setEditingQuestion(null);
-                setOptionValidationMessage("");
               }}
             />
           </div>

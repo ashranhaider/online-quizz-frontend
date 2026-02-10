@@ -24,7 +24,7 @@ const defaultValues: QuizFormValues = {
   name: "",
   uniqueURL: "",
   isActive: true,
-  timeAllowed: 0
+  timeAllowed: 1
 };
 
 export default function QuizForm({
@@ -90,14 +90,14 @@ export default function QuizForm({
                 <Form.Label className="fw-semibold">Time Allowed</Form.Label>
                 <Form.Control
                   type="number"
-                  min={0}
+                  min={1}
                   step={1}
                   placeholder="Minutes"
                   isInvalid={!!errors.timeAllowed}
                   {...register("timeAllowed", {
                     required: "Time allowed is required",
                     valueAsNumber: true,
-                    min: { value: 0, message: "Time allowed must be 0 or more" }
+                    min: { value: 1, message: "Time allowed must be 1 or more" }
                   })}
                 />
                 <Form.Control.Feedback type="invalid">

@@ -89,6 +89,7 @@ export default function QuestionForm({
     handleSubmit,
     reset,
     setValue,
+    setError,
     clearErrors,
     watch,
     formState: { errors },
@@ -128,6 +129,33 @@ export default function QuestionForm({
   }, [normalizedInitialValues, reset]);
 
   const handleFormSubmit = async (data: QuestionFormValues) => {
+    const shouldValidateOptions = isOptionQuestionType(data.questionType);
+    if (shouldValidateOptions) {
+      const optionsWithText = sanitizeQuestionOptions(data.questionOptions).filter(
+        option => option.optionText.length > 0
+      );
+      const correctCount = optionsWithText.filter(option => option.isCorrect).length;
+
+      if (correctCount > 1) {
+        setError("questionOptions", {
+          type: "validate",
+          message:
+            "More than one option has been selected as true. Please select only 1 correct option.",
+        });
+        return;
+      }
+
+      if (optionsWithText.length > 0 && correctCount === 0) {
+        setError("questionOptions", {
+          type: "validate",
+          message: "Please select 1 correct option before saving this question.",
+        });
+        return;
+      }
+
+      clearErrors("questionOptions");
+    }
+
     await onSubmit({
       questionText: data.questionText.trim(),
       questionType: data.questionType,
@@ -219,6 +247,14 @@ export default function QuestionForm({
                 </Alert>
               </Col>
             )}
+            {!Array.isArray(errors.questionOptions) &&
+              errors.questionOptions?.message && (
+                <Col xs={12}>
+                  <Alert variant="danger" className="mb-0">
+                    {errors.questionOptions.message}
+                  </Alert>
+                </Col>
+              )}
 
             <Col xs={12}>
               <Form.Check
@@ -237,6 +273,7 @@ export default function QuestionForm({
                   append={append}
                   remove={remove}
                   setValue={setValue}
+                  clearErrors={clearErrors}
                 />
               </Col>
             )}
