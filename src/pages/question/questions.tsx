@@ -4,8 +4,7 @@ import { Alert } from "react-bootstrap";
 import QuestionForm, {
   type QuestionFormValues,
 } from "../../features/question/components/QuestionForm";
-import QuestionDeleteModal from "../../features/question/components/QuestionDeleteModal";
-import QuestionOptionDeleteModal from "../../features/question/components/QuestionOptionDeleteModal";
+import ConfirmModal from "../../shared/components/ConfirmModal";
 import QuestionTable from "../../features/question/components/QuestionTable";
 import { useCreateQuestion } from "../../features/question/hooks/useCreateQuestion";
 import { useDeleteQuestion } from "../../features/question/hooks/useDeleteQuestion";
@@ -213,19 +212,21 @@ function CreateQuestion() {
         </div>
       </div>
 
-      <QuestionDeleteModal
-        show={showDeleteModal}
-        isDeleting={deleteQuestionMutation.isPending}
-        question={selectedQuestion}
-        onCancel={handleCloseDeleteModal}
-        onConfirm={handleConfirmDelete}
-      />
-      <QuestionOptionDeleteModal
+      <ConfirmModal
         show={showOptionDeleteModal}
-        isDeleting={deleteQuestionOptionMutation.isPending}
-        option={selectedOption}
+        title="Delete option?"
+        body="Are you sure you want to delete this option? This action cannot be undone."
+        isPending={deleteQuestionOptionMutation.isPending}
         onCancel={handleCloseOptionDeleteModal}
         onConfirm={handleConfirmOptionDelete}
+      />
+      <ConfirmModal
+        show={showDeleteModal}
+        title="Delete question?"
+        body="Are you sure you want to delete this question? This action cannot be undone."
+        isPending={deleteQuestionMutation.isPending}
+        onCancel={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
       />
     </>
   );

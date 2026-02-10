@@ -6,10 +6,10 @@ import {
   type ValueGetterParams,
 } from "ag-grid-community";
 import { useNavigate } from "react-router-dom";
-import { Button, Modal } from "react-bootstrap";
 import type { Quiz } from "../../../features/quizzes/types/quiz";
 import { useDeleteQuiz } from "../../../features/quizzes/hooks/useDeleteQuiz";
 import { toastService } from "../../../shared/services/toast.service";
+import ConfirmModal from "../../../shared/components/ConfirmModal";
 
 type QuizTableProps = {
   quizzes: Quiz[];
@@ -187,31 +187,14 @@ export default function QuizTable({ quizzes }: QuizTableProps) {
         </div>
       </div>
 
-      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} centered>
-        <Modal.Header closeButton={!deleteQuizMutation.isPending}>
-          <Modal.Title>Delete quiz?</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this quiz? This action cannot be
-          undone.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={handleCloseDeleteModal}
-            disabled={deleteQuizMutation.isPending}
-          >
-            No
-          </Button>
-          <Button
-            variant="danger"
-            onClick={handleConfirmDelete}
-            disabled={deleteQuizMutation.isPending}
-          >
-            {deleteQuizMutation.isPending ? "Deleting..." : "Yes, delete"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ConfirmModal
+        show={showDeleteModal}
+        title="Delete quiz?"
+        body="Are you sure you want to delete this quiz? This action cannot be undone."
+        isPending={deleteQuizMutation.isPending}
+        onCancel={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+      />
     </>
   );
 }
