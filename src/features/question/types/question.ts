@@ -45,5 +45,5 @@ export interface CreateQuestionOptionRequest {
   optionText: string;
   isCorrect: boolean;
   optionImage?: string;
-  questionId: number;
+  questionId?: number;
 }
